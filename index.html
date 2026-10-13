@@ -7,8 +7,375 @@
     <meta name="description" content="Re:Balance AI — 지역경제 신호를 정책금융의 선택지로. 80초 인터랙티브 모션그래픽 데모.">
     <title>Re:Balance AI · 정책금융을 설계하는 AI</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310332C'/%3E%3Cpath d='M17 24h30l-9-9M47 40H17l9 9' stroke='%23B9DFC4' stroke-width='5' fill='none'/%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css">
-    <script src="app.js" defer></script>
+    <!-- REBALANCE:STYLES:START -->
+    <style>
+:root {
+  color-scheme: dark;
+  --background: #10332c;
+  --mint: #b9dfc4;
+  --cream: #f0ebd8;
+  --muted: #7fa99a;
+  --gold: #e3c26b;
+  --risk: #ed8a5c;
+  --dark: #15332d;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --duration: 800ms;
+  font-family: Pretendard, "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--background); color: var(--cream); }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 5px; border-radius: 4px; }
+button:disabled { cursor: default; }
+.svg-library { position: absolute; width: 0; height: 0; overflow: hidden; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.experience { width: min(1440px, calc(100% - 80px)); margin: 0 auto; padding: 28px 0 20px; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; }
+.masthead { display: flex; align-items: center; justify-content: space-between; padding: 0 3px 24px; }
+.wordmark { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; letter-spacing: -.2px; }
+.brand-icon { color: var(--mint); width: 29px; height: 29px; }
+.wordmark-ai { font-weight: 400; color: var(--mint); }
+.masthead-note { font-size: 11px; color: var(--muted); letter-spacing: 1.5px; }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; isolation: isolate; overflow: hidden; container-type: inline-size; border: 1px solid rgb(127 169 154 / .17); border-radius: 3px; }
+.orbit { position: absolute; border: 1px solid rgb(127 169 154 / .065); border-radius: 50%; pointer-events: none; z-index: -1; }
+.orbit-one { width: 89%; height: 72%; left: 5.5%; top: 22%; }
+.orbit-two { width: 119%; height: 95%; left: -9.5%; top: 11%; }
+.stage-meta { position: absolute; top: 5.2%; left: 4.5%; right: 4.5%; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: clamp(9px, 1cqw, 15px); z-index: 3; }
+#chapter { letter-spacing: 1px; }
+#scene-number { color: var(--cream); font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+.total { color: var(--muted); }
+.simulation-label { font-size: clamp(7px, .65cqw, 10px); letter-spacing: 2px; opacity: .8; }
+.scene-host { position: absolute; inset: 0; }
+.scene { position: absolute; inset: 0; display: flex; align-items: center; flex-direction: column; padding: 11.8% 9% 8%; opacity: 1; }
+.scene.is-entering { animation: scene-enter var(--duration) var(--ease) both; }
+.scene.is-leaving { animation: scene-leave var(--duration) var(--ease) both; pointer-events: none; }
+.scene-title { margin: 0; flex: none; text-align: center; font-weight: 750; font-size: clamp(18px, 3.75cqw, 54px); letter-spacing: -.035em; line-height: 1.28; }
+.scene-title .accent { color: var(--mint); }
+.scene-kicker { margin: 1.3cqw 0 0; font-size: clamp(9px, .9cqw, 13px); letter-spacing: .1em; color: var(--muted); }
+.scene-art { position: relative; flex: 1; min-height: 0; width: 100%; margin-top: 2cqw; display: flex; align-items: center; justify-content: center; }
+.stage-subtitle { position: absolute; bottom: 4.5%; left: 9%; right: 9%; margin: 0; color: var(--muted); text-align: center; font-size: clamp(8px, .85cqw, 12px); letter-spacing: .025em; line-height: 1.5; z-index: 3; pointer-events: none; }
+.edge-nav { position: absolute; top: 16%; bottom: 13%; width: 7%; z-index: 4; font-size: clamp(24px, 3cqw, 38px); color: var(--muted); transition: color 300ms, background 300ms; }
+.edge-prev { left: 0; }
+.edge-next { right: 0; }
+.edge-nav span { opacity: .2; transition: opacity 300ms; }
+.edge-nav:not(:disabled):hover span, .edge-nav:focus-visible span { opacity: 1; }
+.edge-nav:disabled span { opacity: 0; }
+.edge-nav:focus-visible { outline-offset: -6px; }
+.transport { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 30px; align-items: center; padding: 21px 3px 12px; }
+.playback { display: flex; align-items: center; gap: 18px; }
+.play-toggle { display: inline-flex; gap: 9px; align-items: center; font-size: 11px; color: var(--mint); padding: 8px 0; white-space: nowrap; }
+#play-icon { width: 11px; font-size: 14px; line-height: 1; }
+#runtime { font-size: 9px; color: var(--muted); letter-spacing: 1.5px; white-space: nowrap; }
+.timeline { display: flex; gap: 6px; width: 100%; }
+.timeline-button { position: relative; flex: 1; height: 30px; padding: 12px 0; }
+.timeline-track { display: block; height: 2px; background: rgb(127 169 154 / .22); overflow: hidden; }
+.timeline-fill { display: block; height: 100%; background: var(--mint); transform: scaleX(0); transform-origin: left; }
+.timeline-button.is-complete .timeline-fill { transform: scaleX(1); background: var(--muted); }
+.timeline-button[aria-current="step"] .timeline-track { background: rgb(185 223 196 / .35); }
+.timeline-button:hover .timeline-track { background: var(--muted); }
+.replay { justify-self: end; font-size: 10px; letter-spacing: 1.5px; color: var(--muted); padding: 9px 0 9px 9px; }
+.replay span { margin-left: 7px; font-size: 15px; }
+.replay:hover { color: var(--cream); }
+.experience-notes { display: flex; align-items: center; justify-content: space-between; gap: 15px; color: var(--muted); font-size: 10px; line-height: 1.6; opacity: .85; }
+.experience-notes p { margin: 0; }
+.mobile-hint { display: none; }
+.mobile-transcript { display: none; }
+.noscript { text-align: center; }
+
+/* Shared graphic language: flat pools, paper, restrained dotted paths. */
+.reveal { opacity: 0; animation: reveal 750ms var(--ease) var(--delay, 0ms) both; }
+.check { display: inline-flex; color: var(--mint); }
+.check .icon { width: 1.4cqw; height: 1.4cqw; }
+.connector { width: 7cqw; height: 1px; border-top: 1px dashed var(--muted); opacity: .55; position: relative; flex: none; }
+.connector::after { content: ""; position: absolute; right: 0; top: -2.5px; width: 4px; height: 4px; border-radius: 50%; background: var(--mint); animation: travel 2.6s var(--ease) infinite; }
+.pool { position: relative; width: 23cqw; flex: none; }
+.pool-shape { width: 100%; height: auto; display: block; overflow: visible; }
+.pool-copy { position: absolute; top: 40%; left: 0; right: 0; color: var(--dark); text-align: center; }
+.pool-label { font-size: 1cqw; font-weight: 500; }
+.pool-value { font-size: 3.25cqw; font-weight: 700; line-height: 1.2; font-variant-numeric: tabular-nums; letter-spacing: -.02em; margin-top: .45cqw; }
+.pool-unit { font-size: .9cqw; margin-left: .35cqw; font-weight: 500; }
+.paper { width: 19cqw; background: var(--cream); color: var(--dark); padding: 1.65cqw 1.8cqw; position: relative; border-radius: 2px 2px 2px 10px; flex: none; }
+.paper::before { content: ""; position: absolute; top: 0; right: 0; width: 1.6cqw; height: 1.6cqw; background: var(--mint); clip-path: polygon(0 0, 0 100%, 100% 100%); }
+.paper-heading { display: flex; align-items: center; gap: .6cqw; font-size: .65cqw; letter-spacing: .1em; color: var(--background); opacity: .8; }
+.paper-heading .icon { width: 1.4cqw; height: 1.4cqw; }
+.paper p { font-size: 1.35cqw; font-weight: 600; line-height: 1.65; margin: 1.2cqw 0 .9cqw; }
+.paper-ruling { display: block; width: 72%; height: 1px; background: rgb(127 169 154 / .35); margin-top: .55cqw; }
+.paper-ruling.short { width: 44%; }
+.micro-label { font-size: .7cqw; letter-spacing: .13em; color: var(--muted); }
+
+/* 01 — finite resources between two goals. */
+.dilemma-art { gap: 4.7cqw; margin-top: 1cqw; }
+.goal { text-align: center; color: var(--mint); width: 12cqw; }
+.goal .icon { width: 3.5cqw; height: 3.5cqw; }
+.goal p { font-size: 1.1cqw; color: var(--cream); margin: .8cqw 0 .5cqw; }
+.goal .up { font-size: 1.5cqw; color: var(--muted); }
+.goal-line { position: absolute; top: 53%; width: 4.5cqw; border-top: 1px dashed rgb(127 169 154 / .5); }
+.goal-line.left { left: 20.5%; }
+.goal-line.right { right: 20.5%; }
+.capacity-note { position: absolute; bottom: -.4cqw; left: 0; width: 100%; text-align: center; font-size: .75cqw; color: var(--muted); }
+
+/* 02 — seventeen symbolic regions, a single local event. */
+.signal-art { width: 75cqw; margin-top: 1.2cqw; }
+.region-network { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.region-node { fill: var(--muted); opacity: .6; }
+.region-name { fill: var(--muted); font-size: 12px; text-anchor: middle; font-family: inherit; }
+.region-risk { animation: region-risk 900ms var(--ease) 1900ms both; }
+.risk-outline { fill: none; stroke: var(--risk); stroke-width: 1; opacity: 0; animation: show-risk 800ms var(--ease) 2100ms both; }
+.risk-mark { fill: var(--dark); font-weight: 700; font-size: 14px; text-anchor: middle; opacity: 0; animation: show-risk 600ms var(--ease) 2100ms both; }
+.news-small { position: absolute; left: 3cqw; top: .8cqw; width: 19cqw; padding: 1.25cqw 1.5cqw; }
+.news-small p { margin: .8cqw 0; font-size: 1.15cqw; }
+.event-route { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 5; opacity: .7; }
+.event-trace { fill: none; stroke: var(--mint); stroke-width: 2; stroke-dasharray: 260; stroke-dashoffset: 260; animation: draw-route 1800ms var(--ease) 900ms both; }
+.industry-effects { position: absolute; right: 4cqw; top: 3.5cqw; display: flex; flex-direction: column; gap: .75cqw; font-size: 1cqw; color: var(--cream); }
+.industry-effects span::before { content: ""; display: inline-block; width: 2cqw; border-top: 1px dashed var(--muted); vertical-align: middle; margin-right: .8cqw; }
+.industry-effects b { font-weight: 500; color: var(--risk); margin-left: .5cqw; }
+
+/* 03 + 05 — a document becomes inspectable, structured conditions. */
+.extraction-art { gap: 3cqw; }
+.event-fields { margin: 0; width: 27cqw; }
+.event-field { display: flex; align-items: center; justify-content: space-between; gap: 1cqw; padding: .53cqw 0; border-bottom: 1px solid rgb(127 169 154 / .14); font-size: 1.05cqw; }
+.event-field dt { color: var(--muted); font-size: .9cqw; }
+.event-field dd { margin: 0; display: flex; gap: .8cqw; align-items: center; }
+.risk-value { color: var(--risk); }
+.event-field:last-child { border-bottom: 0; }
+.extraction-art .micro-label { position: absolute; bottom: -1cqw; right: 5.7cqw; }
+.policy-art { gap: 2.4cqw; }
+.policy-note { width: 23cqw; }
+.policy-note p { font-size: 1.25cqw; line-height: 1.85; }
+.policy-note .paper-heading { color: var(--background); }
+.compiler { flex: none; display: flex; width: 12cqw; flex-direction: column; align-items: center; gap: .7cqw; }
+.compiler-name { color: var(--mint); font-size: .9cqw; white-space: nowrap; }
+.compiler .connector { width: 10cqw; }
+.constraints { width: 27cqw; }
+.constraint { display: grid; grid-template-columns: 1fr auto 1.6cqw; align-items: center; gap: .9cqw; padding: .75cqw 0; border-bottom: 1px solid rgb(127 169 154 / .15); font-size: 1cqw; }
+.constraint-value { color: var(--mint); font-size: .95cqw; }
+.constraint .check { animation: reveal 350ms var(--ease) calc(var(--delay) + 300ms) both; }
+.rule-status { margin: 1.1cqw 0 0; color: var(--mint); font-size: .75cqw; letter-spacing: .03em; display: flex; gap: .5cqw; align-items: center; }
+.rule-status .icon { width: 1.1cqw; height: 1.1cqw; }
+
+/* 04 — a small forecasting engine and four outputs, no dashboard. */
+.forecast-art { flex-direction: column; gap: 1.8cqw; margin-top: 1.5cqw; }
+.forecast-inputs { display: flex; align-items: center; justify-content: center; gap: 2.9cqw; }
+.input-token { display: flex; flex-direction: column; align-items: center; gap: .4cqw; min-width: 5cqw; font-size: .9cqw; color: var(--muted); }
+.input-token .icon { width: 2.4cqw; height: 2.4cqw; color: var(--mint); }
+.forecast-engine { position: relative; width: 8cqw; height: 3.5cqw; border: 1px solid rgb(185 223 196 / .5); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .9cqw; color: var(--mint); }
+.forecast-engine::before, .forecast-engine::after { content: ""; position: absolute; width: 1px; height: 1.9cqw; left: 50%; background: repeating-linear-gradient(to bottom, var(--muted) 0 2px, transparent 2px 5px); }
+.forecast-engine::before { bottom: 100%; }
+.forecast-engine::after { top: 100%; }
+.forecast-feed { position: absolute; width: 28cqw; height: 1.8cqw; left: 50%; top: -1.8cqw; transform: translateX(-50%); border: 1px dashed rgb(127 169 154 / .4); border-top: 0; border-radius: 0 0 50% 50%; }
+.forecast-outputs { width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2cqw; text-align: center; }
+.forecast-metric { margin: 0; }
+.forecast-metric dt { color: var(--muted); font-size: .9cqw; margin-bottom: .7cqw; }
+.forecast-metric dd { font-variant-numeric: tabular-nums; margin: 0; color: var(--mint); font-size: 2.9cqw; font-weight: 600; letter-spacing: -.02em; white-space: nowrap; }
+.metric-unit { font-size: 1.05cqw; margin-left: .3cqw; color: var(--muted); }
+.forecast-metric.loss dd { color: var(--cream); }
+
+/* 06 — allocations shift, three alternatives remain for the human. */
+.portfolio-art { flex-direction: column; gap: 1.1cqw; margin-top: 1.1cqw; }
+.allocation { display: flex; align-items: center; gap: 2cqw; }
+.allocation-pool { width: 12.3cqw; }
+.allocation-pool .pool-label { font-size: .65cqw; }
+.allocation-pool .pool-value { font-size: 1.8cqw; }
+.allocation-pool .pool-unit { font-size: .65cqw; }
+.allocation-visual { display: flex; flex-direction: column; gap: .7cqw; }
+.allocation-caption { display: flex; align-items: center; justify-content: space-between; font-size: .75cqw; color: var(--muted); gap: 2cqw; }
+.scenario-count { color: var(--gold); font-variant-numeric: tabular-nums; }
+.allocation-bars { display: flex; gap: .4cqw; height: 4.5cqw; align-items: flex-end; width: 28cqw; }
+.allocation-bar { flex: 1; height: var(--initial-height); background: var(--muted); border-radius: 2px 2px 0 0; opacity: .6; transition: height 1200ms var(--ease), background 900ms var(--ease); }
+.allocation-bars.is-calculated .allocation-bar { height: var(--target-height); background: var(--mint); opacity: .85; }
+.portfolio-options { display: flex; width: 60cqw; justify-content: center; gap: 3cqw; margin-top: .8cqw; }
+.portfolio-option { width: 18cqw; padding: 1cqw 0; text-align: center; border-bottom: 1px solid rgb(127 169 154 / .25); transition: border-color 450ms var(--ease), color 450ms var(--ease); }
+.portfolio-name { display: flex; justify-content: center; align-items: center; gap: .6cqw; font-size: 1.3cqw; font-weight: 600; }
+.selection-mark { font-size: .85cqw; color: var(--mint); opacity: 0; }
+.portfolio-option[aria-pressed="true"] { color: var(--mint); border-color: var(--mint); }
+.portfolio-option[aria-pressed="true"] .selection-mark { opacity: 1; }
+.portfolio-traits { display: flex; flex-direction: column; gap: .5cqw; margin-top: .9cqw; font-size: .9cqw; color: var(--muted); }
+.human-choice { margin: .7cqw 0 0; font-size: .85cqw; color: var(--cream); }
+.human-choice span { color: var(--muted); margin-right: .6cqw; }
+
+/* 07 — identical pools, one shock, a comparable remaining capacity. */
+.stress-scene { padding-top: 10.4%; }
+.stress-scene .scene-title { font-size: 3.3cqw; }
+.stress-art { display: flex; flex-direction: column; margin-top: 1cqw; gap: .8cqw; }
+.shock-event { color: var(--risk); font-size: 1cqw; display: flex; align-items: center; gap: .7cqw; }
+.risk-badge { width: 1.4cqw; height: 1.4cqw; border: 1px solid var(--risk); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: .85cqw; }
+.stress-pools { display: flex; gap: 8cqw; align-items: center; }
+.stress-case { text-align: center; }
+.stress-case-title { font-size: .95cqw; margin: 0 0 .4cqw; display: flex; align-items: center; gap: .5cqw; justify-content: center; }
+.stress-case .pool { width: 18cqw; }
+.stress-case .pool-label { font-size: .8cqw; }
+.stress-case .pool-value { font-size: 2.5cqw; }
+.stress-case .pool-unit { font-size: .75cqw; }
+.stress-case.current .pool-value { color: var(--dark); }
+.stress-case.current .pool { --mint: #f0ebd8; --cream: #ed8a5c; }
+.stress-case.balanced .stress-case-title { color: var(--mint); }
+.stress-scenarios { display: flex; gap: .6cqw; }
+.stress-button { font-size: .8cqw; padding: .65cqw 1.05cqw; border: 1px solid rgb(127 169 154 / .3); border-radius: 20px; color: var(--muted); transition: background 300ms, color 300ms, border-color 300ms; }
+.stress-button[aria-pressed="true"] { color: var(--cream); border-color: var(--gold); }
+.stress-principle { text-align: center; margin-top: .4cqw; font-size: 1cqw; line-height: 1.3; }
+.stress-principle strong { color: var(--cream); font-size: 1cqw; font-weight: 600; }
+.stress-principle p { margin: .55cqw 0 0; color: var(--muted); font-size: .72cqw; line-height: 1.6; }
+.stress-principle p span { margin: 0 .6cqw; opacity: .4; }
+
+/* 08 — from measurement to policy design. */
+.closing-scene { justify-content: center; padding: 9% 6%; }
+.legacy-label { position: absolute; top: 21%; left: 0; right: 0; text-align: center; font-size: 1cqw; line-height: 1.7; color: var(--muted); animation: legacy-out 900ms var(--ease) 1100ms both; }
+.legacy-label span { display: block; font-size: .8cqw; }
+.closing-title { font-size: 3.6cqw; margin: 0; line-height: 1.4; }
+.closing-brand { display: flex; align-items: center; justify-content: center; gap: .9cqw; margin: 2.8cqw 0 .7cqw; font-size: 2.7cqw; font-weight: 600; letter-spacing: -.02em; }
+.closing-brand .icon { width: 3cqw; height: 3cqw; color: var(--mint); }
+.closing-tagline { margin: 0; color: var(--muted); font-size: .9cqw; letter-spacing: .07em; }
+.engine-flow { display: flex; gap: 1.1cqw; align-items: center; justify-content: center; margin-top: 3cqw; color: var(--muted); font-size: .72cqw; letter-spacing: .14em; }
+.engine-flow .icon { width: 1cqw; height: 1cqw; }
+.closing-choice { font-size: 1cqw; color: var(--cream); margin-top: 2cqw; }
+.closing-replay { font-size: .8cqw; color: var(--mint); padding: .7cqw 1cqw; letter-spacing: .13em; }
+
+@keyframes scene-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scene-leave { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes reveal { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes travel { from { transform: translateX(-6cqw); opacity: 0; } 25% { opacity: 1; } to { transform: translateX(0); opacity: 0; } }
+@keyframes region-risk { from { fill: var(--muted); opacity: .6; } to { fill: var(--risk); opacity: 1; } }
+@keyframes show-risk { to { opacity: 1; } }
+@keyframes draw-route { to { stroke-dashoffset: 0; } }
+@keyframes legacy-out { to { opacity: 0; transform: translateX(-20px); } }
+
+@media (max-width: 900px) {
+  .experience { width: calc(100% - 40px); padding: 20px 0; }
+  .transport { gap: 20px; }
+  .playback { gap: 10px; }
+  .experience-notes { font-size: 9px; }
+}
+@media (min-width: 901px) and (min-height: 600px) {
+  .experience { width: min(1440px, calc(100% - 80px), calc((100svh - 190px) * 16 / 9)); }
+}
+@media (max-width: 600px) {
+  .experience { width: calc(100% - 24px); padding: 24px 0; }
+  .masthead { padding-bottom: 20px; }
+  .wordmark { font-size: 16px; gap: 7px; }
+  .brand-icon { width: 25px; height: 25px; }
+  .masthead-note { font-size: 9px; letter-spacing: .5px; }
+  .stage { border-radius: 2px; }
+  .stage-meta { top: 5%; font-size: 9px; }
+  .simulation-label { font-size: 7px; letter-spacing: .5px; }
+  .scene { padding: 11.3% 8% 7%; }
+  .scene-title { font-size: 4.5cqw; letter-spacing: -.025em; }
+  .scene-kicker { font-size: 2.1cqw; margin-top: 1.1cqw; }
+  .stage-subtitle { bottom: 3.7%; left: 7%; right: 7%; font-size: max(8px, 1.9cqw); letter-spacing: 0; }
+  .scene-art { margin-top: 1.5cqw; }
+  .pool { width: 25cqw; }
+  .pool-label { font-size: 2cqw; }
+  .pool-value { font-size: 4cqw; margin-top: .3cqw; }
+  .pool-unit { font-size: 1.6cqw; }
+  .goal { width: 15cqw; }
+  .goal p { font-size: 2.1cqw; }
+  .goal .icon { width: 5cqw; height: 5cqw; }
+  .goal .up { font-size: 2.5cqw; }
+  .dilemma-art { gap: 3.5cqw; }
+  .capacity-note { font-size: 1.65cqw; bottom: -1.6cqw; }
+  .goal-line { width: 3cqw; }
+  .paper { width: 23cqw; padding: 1.8cqw; }
+  .paper-heading { font-size: 1.5cqw; letter-spacing: .02em; }
+  .paper-heading .icon { width: 2.2cqw; height: 2.2cqw; }
+  .paper p { font-size: 2.15cqw; margin: 1.2cqw 0; line-height: 1.5; }
+  .news-small { width: 25cqw; top: -.5cqw; left: 0; }
+  .news-small p { font-size: 2cqw; }
+  .region-name { font-size: 16px; }
+  .industry-effects { right: 0; top: 1cqw; font-size: 2cqw; gap: .9cqw; }
+  .extraction-art { gap: 2cqw; }
+  .connector { width: 5cqw; }
+  .event-fields { width: 39cqw; }
+  .event-field { padding: .2cqw 0; font-size: 1.95cqw; }
+  .event-field dt { font-size: 1.85cqw; }
+  .check .icon { width: 2cqw; height: 2cqw; }
+  .extraction-art .micro-label { font-size: 1.45cqw; bottom: -1.5cqw; right: 3cqw; }
+  .forecast-art { gap: 1.4cqw; }
+  .input-token { font-size: 2cqw; gap: .5cqw; }
+  .input-token .icon { width: 3.4cqw; height: 3.4cqw; }
+  .forecast-engine { width: 13cqw; height: 4.5cqw; font-size: 1.85cqw; }
+  .forecast-metric dt { font-size: 1.9cqw; margin-bottom: .6cqw; }
+  .forecast-metric dd { font-size: 3.9cqw; }
+  .metric-unit { font-size: 2cqw; margin-left: .2cqw; }
+  .forecast-outputs { gap: .8cqw; }
+  .policy-art { gap: 1.5cqw; }
+  .policy-note { width: 30cqw; }
+  .policy-note p { font-size: 2cqw; }
+  .compiler { width: 12cqw; gap: 1.2cqw; }
+  .compiler-name { font-size: 1.65cqw; white-space: normal; text-align: center; }
+  .compiler .connector { width: 9cqw; }
+  .constraints { width: 39cqw; }
+  .constraint { grid-template-columns: 1fr auto 2cqw; gap: .5cqw; padding: .75cqw 0; font-size: 1.9cqw; }
+  .constraint-value { font-size: 1.75cqw; }
+  .rule-status { font-size: 1.7cqw; margin-top: 1.1cqw; }
+  .rule-status .icon { width: 2cqw; height: 2cqw; }
+  .allocation-pool { width: 18cqw; }
+  .allocation-pool .pool-label { font-size: 1.5cqw; }
+  .allocation-pool .pool-value { font-size: 2.7cqw; }
+  .allocation-pool .pool-unit { font-size: 1.2cqw; }
+  .allocation-caption { font-size: 1.65cqw; }
+  .allocation-bars { height: 5.5cqw; width: 35cqw; }
+  .portfolio-options { width: 77cqw; gap: 2cqw; margin-top: .5cqw; }
+  .portfolio-option { width: 24cqw; padding: 1.1cqw 0; }
+  .portfolio-name { font-size: 2.35cqw; }
+  .selection-mark { font-size: 1.8cqw; }
+  .portfolio-traits { font-size: 1.9cqw; gap: .4cqw; margin-top: .6cqw; }
+  .human-choice { font-size: 1.9cqw; margin: .6cqw 0 0; }
+  .stress-scene { padding-top: 9.5%; padding-bottom: 5%; }
+  .stress-scene .scene-title { font-size: 4cqw; }
+  .stress-art { gap: .4cqw; margin-top: .7cqw; }
+  .shock-event { font-size: 1.95cqw; }
+  .risk-badge { width: 2.2cqw; height: 2.2cqw; font-size: 1.7cqw; }
+  .stress-case-title { font-size: 1.9cqw; margin-bottom: .3cqw; }
+  .stress-case .pool { width: 21cqw; }
+  .stress-case .pool-label { font-size: 1.75cqw; }
+  .stress-case .pool-value { font-size: 3.5cqw; }
+  .stress-case .pool-unit { font-size: 1.5cqw; }
+  .stress-pools { gap: 9cqw; }
+  .stress-button { font-size: 1.9cqw; padding: 1.05cqw 1.5cqw; }
+  .stress-principle { margin-top: .3cqw; font-size: 1.95cqw; line-height: 1.2; }
+  .stress-principle strong { font-size: 1.95cqw; }
+  .stress-principle p { font-size: 1.55cqw; margin-top: .3cqw; line-height: 1.45; }
+  .stress-principle p span { display: none; }
+  .stress-principle p .principle-line { display: block; margin: 0; opacity: 1; }
+  .closing-title { font-size: 4.1cqw; }
+  .legacy-label { font-size: 2.5cqw; }
+  .legacy-label span { font-size: 2cqw; }
+  .closing-brand { font-size: 4cqw; margin-top: 3cqw; }
+  .closing-brand .icon { width: 4.5cqw; height: 4.5cqw; }
+  .closing-tagline { font-size: 1.9cqw; letter-spacing: .02em; }
+  .engine-flow { font-size: 1.7cqw; gap: 1cqw; letter-spacing: .02em; margin-top: 2.4cqw; }
+  .engine-flow .icon { width: 2cqw; height: 2cqw; }
+  .closing-choice { font-size: 2.2cqw; margin-top: 2cqw; margin-bottom: .7cqw; }
+  .closing-replay { font-size: 2cqw; }
+  .transport { grid-template-columns: auto 1fr auto; gap: 14px; padding: 15px 2px 9px; }
+  .play-toggle { font-size: 10px; min-height: 44px; }
+  #runtime { display: none; }
+  .timeline { gap: 4px; }
+  .timeline-button { height: 44px; padding: 20px 0; }
+  .replay { font-size: 9px; padding-left: 0; min-height: 44px; }
+  .replay span { margin-left: 3px; }
+  .experience-notes { align-items: flex-start; flex-direction: column; gap: 5px; font-size: 10px; }
+  .desktop-hint { display: none; }
+  .mobile-hint { display: inline; }
+  .mobile-transcript { display: block; color: var(--muted); border-bottom: 1px solid rgb(127 169 154 / .17); margin-top: 12px; font-size: 12px; line-height: 1.7; }
+  .mobile-transcript summary { cursor: pointer; display: flex; align-items: center; justify-content: space-between; min-height: 44px; list-style: none; }
+  .mobile-transcript summary::-webkit-details-marker { display: none; }
+  .mobile-transcript summary span { color: var(--mint); }
+  .mobile-transcript summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .mobile-transcript[open] summary span { transform: rotate(45deg); }
+  #transcript-content { color: var(--cream); padding-bottom: 14px; }
+  #transcript-content p { margin: 0 0 8px; font-weight: 500; }
+  #transcript-content ul { padding: 0; margin: 0; list-style: none; color: var(--muted); }
+  #transcript-content li + li { margin-top: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+  .connector::after { display: none; }
+}
+    </style>
+    <!-- REBALANCE:STYLES:END -->
   </head>
   <body>
     <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -74,5 +441,470 @@
       <p class="sr-only" id="scene-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
       <noscript><p class="noscript">이 데모를 보려면 브라우저의 JavaScript를 켜 주세요.</p></noscript>
     </main>
+    <!-- REBALANCE:SCRIPT:START -->
+    <script>
+"use strict";
+
+// DEMO VALUE — replace with real analysis result.
+// All financial figures, confidence, allocations, news and shocks below are
+// fictional, illustrative values. No model, external API or allocation executes.
+const DEMO_DATA = {
+  availableGuarantee: 10000,
+  constrainedGuarantee: 8700,
+  news: { region: "군산", event: "생산중단", months: 3, confidence: 93 },
+  forecastDemandGrowth: 12.4,
+  pd: 5.8,
+  expectedLoss: 540,
+  recoveryRate: 41,
+  scenarios: 12482,
+  // Illustrative relative block heights, not measured regional allocations.
+  initialAllocation: [38, 51, 43, 65, 48, 80, 58, 45, 71, 52, 41, 60, 85, 48, 62, 44, 56],
+  allocations: {
+    stable: [45, 54, 63, 50, 61, 65, 57, 62, 48, 53, 68, 60, 50, 56, 61, 53, 58],
+    balanced: [60, 47, 68, 56, 74, 52, 65, 49, 62, 76, 55, 71, 46, 67, 58, 73, 64],
+    support: [70, 59, 85, 63, 79, 54, 81, 58, 76, 90, 66, 83, 57, 75, 68, 86, 72],
+  },
+  preShockCapacity: 6900,
+  stress: {
+    construction: { label: "건설업 +30%", event: "건설업 부실 +30%", current: 3100, stable: 4300, balanced: 4050, support: 3500 },
+    rate: { label: "금리 +1.5%p", event: "금리 +1.5%p", current: 4700, stable: 5600, balanced: 5300, support: 4800 },
+    sales: { label: "지역매출 −10%", event: "지역매출 −10%", current: 3800, stable: 4900, balanced: 4600, support: 4200 },
+  },
+};
+
+const PORTFOLIOS = {
+  stable: { name: "안정형", comparison: "Re:Balance 안정안", traits: ["예상손실 ↓", "지원규모 ↓"] },
+  balanced: { name: "균형형", comparison: "Re:Balance 균형안", traits: ["손실 ↔", "지원 ↔"] },
+  support: { name: "지원확대형", comparison: "Re:Balance 지원확대안", traits: ["지원규모 ↑", "위험 ↑"] },
+};
+
+// Scene copy and durations are kept together for easy editorial changes.
+// 8 × 10 seconds = an 80-second presentation; manual navigation pauses it.
+const SCENES = [
+  { chapter: "딜레마", title: ["지원은 늘려야 하고,", "손실은 줄여야 한다."], subtitle: "한정된 재보증 여력 · 지역 지원 확대 · 건전성 관리", duration: 10000, render: dilemmaScene },
+  { chapter: "경제 신호", title: ["숫자가 움직이기 전에,", "지역은 먼저 움직인다."], subtitle: "Economic Signal Agent · 비정형 정보 → 구조화된 Risk Event", duration: 10000, render: signalScene },
+  { chapter: "신호 구조화", title: ["하나의 뉴스가", "하나의 위험 변수로."], subtitle: "LLM Extraction · 뉴스/공시/정책자료 → 지역·업종 Risk Event", duration: 10000, render: extractionScene },
+  { chapter: "예측", title: ["위험을 발견했다면,", "다음은 얼마나 커질지를 계산한다."], subtitle: "Forecast Engine · Demand · PD · Expected Loss · Recovery", duration: 10000, render: forecastScene },
+  { chapter: "정책 변환", title: ["정책 언어를", "계산 가능한 조건으로."], subtitle: "Policy Compiler · 자연어 정책 목표 → Optimization Constraints", duration: 10000, render: policyScene },
+  { chapter: "포트폴리오", title: ["한 개의 정답 대신,", "세 개의 선택지."], subtitle: "Portfolio Optimizer · 정책효과 · 예상손실 · 집중위험 · 재보증 여력", duration: 10000, render: portfolioScene },
+  { chapter: "스트레스 테스트", title: ["그 결정,", "충격이 와도 버틸까?"], subtitle: "Stress Engine · 구조적 위험과 일시적 외부충격을 구분", duration: 10000, render: stressScene },
+  { chapter: "Re:Balance", title: ["위험을 측정하는 AI에서", "정책금융을 설계하는 AI로."], subtitle: "신용보증재단중앙회 · 재보증·리스크관리 담당자를 위한 의사결정 지원", duration: 10000, render: closingScene },
+];
+
+const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+const state = {
+  index: 0,
+  autoplay: !motionQuery.matches,
+  elapsed: 0,
+  lastTick: 0,
+  version: 0,
+  reducedMotion: motionQuery.matches,
+  portfolio: "balanced",
+  stress: "construction",
+};
+
+const elements = {
+  stage: document.getElementById("stage"),
+  host: document.getElementById("scene-host"),
+  chapter: document.getElementById("chapter"),
+  number: document.getElementById("scene-number"),
+  subtitle: document.getElementById("stage-subtitle"),
+  announcement: document.getElementById("scene-announcement"),
+  prev: document.getElementById("edge-prev"),
+  next: document.getElementById("edge-next"),
+  timeline: document.getElementById("timeline"),
+  toggle: document.getElementById("play-toggle"),
+  playIcon: document.getElementById("play-icon"),
+  playLabel: document.getElementById("play-label"),
+};
+const formatter = new Intl.NumberFormat("ko-KR");
+const sceneTimers = new Set();
+const numberAnimations = new Map();
+
+function icon(name, className = "") {
+  return `<svg class="icon ${className}" aria-hidden="true"><use href="#icon-${name}"/></svg>`;
+}
+
+function titleMarkup(scene) {
+  return `<h1 class="scene-title reveal" style="--delay:180ms">${scene.title[0]}<br><span class="accent">${scene.title[1]}</span></h1>`;
+}
+
+function poolMarkup(id, value, label = "가용 재보증", className = "") {
+  return `<div class="pool ${className}" role="group" aria-label="${label}">
+    <svg class="pool-shape" viewBox="0 0 320 170" aria-hidden="true"><use href="#object-pool"/></svg>
+    <div class="pool-copy"><div class="pool-label">${label}</div><div class="pool-value"><span id="${id}" data-value="${value}">${formatter.format(value)}</span><span class="pool-unit">억원</span></div></div>
+  </div>`;
+}
+
+function newsMarkup(className = "") {
+  return `<div class="paper ${className}"><div class="paper-heading">${icon("document")}<span>지역 경제 신호 · 가상 뉴스</span></div><p>${DEMO_DATA.news.region} 주요 제조사업장<br>${DEMO_DATA.news.months}개월 생산중단</p><span class="paper-ruling"></span><span class="paper-ruling short"></span></div>`;
+}
+
+function dilemmaScene(scene) {
+  return `${titleMarkup(scene)}<p class="scene-kicker reveal" style="--delay:700ms">같은 재원 · 서로 다른 목표</p>
+    <div class="scene-art dilemma-art">
+      <div class="goal reveal" style="--delay:1500ms">${icon("bank")}<p>지역 지원</p><span class="up">↑</span></div>
+      <div class="goal-line left reveal" style="--delay:1900ms" aria-hidden="true"></div>
+      <div class="reveal" style="--delay:1000ms">${poolMarkup("capacity", DEMO_DATA.availableGuarantee)}</div>
+      <div class="goal-line right reveal" style="--delay:1900ms" aria-hidden="true"></div>
+      <div class="goal reveal" style="--delay:1750ms">${icon("shield")}<p>건전성 관리</p><span class="up">↑</span></div>
+      <div class="capacity-note reveal" style="--delay:4500ms">여력은 한정되어 있습니다.</div>
+    </div>`;
+}
+
+function signalScene(scene) {
+  // Symbolic regional nodes only: this is deliberately not a geographic map.
+  const names = { 1: "서울", 4: "경기", 8: "전북", 11: "충남", 15: "부산" };
+  const points = Array.from({ length: 17 }, (_, i) => {
+    const angle = Math.PI * (0.12 + (i / 16) * 0.76);
+    return { x: 365 - Math.cos(angle) * 282, y: 72 + Math.sin(angle) * 141 };
+  });
+  const riskPoint = points[8];
+  const nodes = points.map((point, i) => `<g class="reveal" style="--delay:${650 + i * 45}ms">
+    ${i === 8 ? `<circle class="risk-outline" cx="${point.x}" cy="${point.y}" r="17"/>` : ""}
+    <circle class="region-node ${i === 8 ? "region-risk" : ""}" cx="${point.x}" cy="${point.y}" r="${i === 8 ? 10 : 5}"/>
+    ${i === 8 ? `<text class="risk-mark" x="${point.x}" y="${point.y + 5}">!</text>` : ""}
+    ${names[i] ? `<text class="region-name" x="${point.x}" y="${point.y + 33}">${names[i]}</text>` : ""}</g>`).join("");
+  const route = `M 210 105 C 260 112, 285 180, ${riskPoint.x} ${riskPoint.y - 20}`;
+  return `${titleMarkup(scene)}<div class="scene-art signal-art">
+    <svg class="region-network" viewBox="0 0 730 270" role="img" aria-label="17개 지역 노드 중 전북에 위험 신호가 발생해 제조·운송·음식·숙박업으로 영향이 퍼지는 가상 예시">
+      <path class="event-route" d="${route}"/><path class="event-trace" d="${route}"/>
+      <path class="event-route reveal" style="--delay:2400ms" d="M382 204 Q 467 167 555 114 M382 204 Q 480 191 555 155 M382 204 Q 480 216 555 197"/>
+      ${nodes}
+    </svg>
+    ${newsMarkup("news-small reveal")}
+    <div class="industry-effects"><span class="reveal" style="--delay:2450ms">제조업 <b>↑</b></span><span class="reveal" style="--delay:2700ms">운송업 <b>↑</b></span><span class="reveal" style="--delay:2950ms">음식·숙박 <b>↑</b></span></div>
+  </div>`;
+}
+
+function extractionScene(scene) {
+  const fields = [
+    ["지역", DEMO_DATA.news.region], ["Event", DEMO_DATA.news.event], ["지속기간", `${DEMO_DATA.news.months}개월`],
+    ["직접 영향", "제조업"], ["2차 영향", "운송 · 음식 · 숙박"], ["Risk", '<span class="risk-value">↑ 위험 신호</span>'],
+    ["Confidence", `${DEMO_DATA.news.confidence}% <span class="check">${icon("check")}</span>`],
+  ];
+  return `${titleMarkup(scene)}<div class="scene-art extraction-art">
+    ${newsMarkup("reveal")}
+    <span class="connector reveal" style="--delay:700ms" aria-hidden="true"></span>
+    <dl class="event-fields">${fields.map(([label, value], i) => `<div class="event-field reveal" style="--delay:${1000 + i * 250}ms"><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>
+    <span class="micro-label reveal" style="--delay:2900ms">DEMO SIMULATION</span>
+  </div>`;
+}
+
+function forecastScene(scene) {
+  const inputs = [["카드매출", "coin"], ["보증", "document"], ["재보증", "bank"], ["폐업", "document"], ["금리", "trend"]];
+  const outputs = [
+    ["3개월 보증수요", "demand", "%", ""], ["예상 PD", "pd", "%", ""],
+    ["예상손실", "loss", "억원", "loss"], ["예상 회수율", "recovery", "%", ""],
+  ];
+  return `${titleMarkup(scene)}<div class="scene-art forecast-art">
+    <div class="forecast-inputs">${inputs.map(([label, name], i) => `<div class="input-token reveal" style="--delay:${600 + i * 170}ms">${icon(name)}<span>${label}</span></div>`).join("")}</div>
+    <div class="forecast-engine reveal" style="--delay:1400ms"><div class="forecast-feed" aria-hidden="true"></div>Forecast</div>
+    <div class="forecast-outputs">${outputs.map(([label, id, unit, className], i) => `<dl class="forecast-metric ${className} reveal" style="--delay:${2100 + i * 250}ms"><dt>${label}</dt><dd><span id="forecast-${id}" data-value="0">${id === "demand" ? "+0.0" : "0"}</span><span class="metric-unit">${unit}</span></dd></dl>`).join("")}</div>
+  </div>`;
+}
+
+function policyScene(scene) {
+  const constraints = [["비수도권 지원", "≥ 정책 목표"], ["Expected Loss", "≤ 기준안"], ["건설업 Exposure", "≤ 집중 한도"], ["중저신용 지원", "≥ 기존 수준"], ["총 재보증", "≤ 가용 여력"]];
+  return `${titleMarkup(scene)}<div class="scene-art policy-art">
+    <div class="paper policy-note reveal" style="--delay:650ms"><div class="paper-heading">${icon("document")}<span>담당자의 정책 목표</span></div><p>“비수도권 지원은 확대하되<br>예상손실은 증가시키지 않고,<br>건설업 편중은 낮춰줘.”</p><span class="paper-ruling"></span><span class="paper-ruling short"></span></div>
+    <div class="compiler reveal" style="--delay:1050ms"><span class="compiler-name">Policy Compiler</span><span class="connector" aria-hidden="true"></span></div>
+    <div class="constraints">${constraints.map(([label, value], i) => `<div class="constraint reveal" style="--delay:${1450 + i * 300}ms"><span>${label}</span><span class="constraint-value">${value}</span><span class="check">${icon("check")}</span></div>`).join("")}
+      <p class="rule-status reveal" style="--delay:3400ms">${icon("check")} Rule validation passed</p>
+    </div>
+  </div>`;
+}
+
+function portfolioScene(scene) {
+  return `${titleMarkup(scene)}<div class="scene-art portfolio-art">
+    <div class="allocation reveal" style="--delay:700ms">
+      ${poolMarkup("portfolio-capacity", DEMO_DATA.availableGuarantee, "총 재보증 여력", "allocation-pool")}
+      <div class="allocation-visual"><div class="allocation-caption"><span>17개 지역</span><span class="scenario-count"><span id="scenario-count" data-value="0">0</span> scenarios</span></div>
+        <div class="allocation-bars" id="allocation-bars" role="img" aria-label="17개 지역의 예시 배분 비중이 바뀌는 모습">${DEMO_DATA.initialAllocation.map((value, i) => `<span class="allocation-bar" style="--initial-height:${value}%;--target-height:${DEMO_DATA.allocations[state.portfolio][i]}%"></span>`).join("")}</div>
+      </div>
+    </div>
+    <div class="portfolio-options" role="group" aria-label="담당자가 비교할 포트폴리오 선택지">
+      ${Object.entries(PORTFOLIOS).map(([key, option], i) => `<button class="portfolio-option reveal" data-portfolio="${key}" aria-pressed="${state.portfolio === key}" style="--delay:${2900 + i * 250}ms"><span class="portfolio-name">${option.name}<span class="selection-mark" aria-hidden="true">✓</span></span><span class="portfolio-traits">${option.traits.map(trait => `<span>${trait}</span>`).join("")}</span></button>`).join("")}
+    </div>
+    <p class="human-choice reveal" style="--delay:3900ms"><span>대안을 눌러 비교하세요.</span> 최종 선택: 담당자</p>
+  </div>`;
+}
+
+function stressScene(scene) {
+  return `${titleMarkup(scene)}<div class="scene-art stress-art">
+    <div class="shock-event reveal" style="--delay:700ms"><span class="risk-badge" aria-hidden="true">!</span><span id="shock-event">${DEMO_DATA.stress[state.stress].event}</span></div>
+    <div class="stress-pools">
+      <div class="stress-case current reveal" style="--delay:1000ms"><p class="stress-case-title">현재 계획</p>${poolMarkup("stress-current", DEMO_DATA.preShockCapacity, "가용 여력")}</div>
+      <div class="stress-case balanced reveal" style="--delay:1250ms"><p class="stress-case-title"><span id="comparison-label">${PORTFOLIOS[state.portfolio].comparison}</span><span class="check">${icon("check")}</span></p>${poolMarkup("stress-proposal", DEMO_DATA.preShockCapacity, "가용 여력")}</div>
+    </div>
+    <div class="stress-scenarios reveal" style="--delay:2400ms" role="group" aria-label="스트레스 시나리오 선택">
+      ${["rate", "construction", "sales"].map(key => `<button class="stress-button" data-stress="${key}" aria-pressed="${state.stress === key}">${DEMO_DATA.stress[key].label}</button>`).join("")}
+    </div>
+    <div class="stress-principle reveal" style="--delay:3100ms"><strong>위험 상승 ≠ 지원 축소</strong><p><span class="principle-line">구조적 악화 → 한도 조정 검토</span><span aria-hidden="true">·</span><span class="principle-line">일시적 외부충격 → 지원 유지·확대 가능</span></p></div>
+  </div>`;
+}
+
+function closingScene(scene) {
+  const flow = ["SIGNAL", "FORECAST", "POLICY", "OPTIMIZE", "STRESS"];
+  return `<div class="legacy-label"><span>기존</span>Risk Measurement</div>
+    <h1 class="scene-title closing-title reveal" style="--delay:1700ms">${scene.title[0]}<br><span class="accent">${scene.title[1]}</span></h1>
+    <div class="closing-brand reveal" style="--delay:2400ms">${icon("balance")}<span>Re:Balance AI</span></div>
+    <p class="closing-tagline reveal" style="--delay:2700ms">AI-powered Policy Portfolio Engine</p>
+    <div class="engine-flow reveal" style="--delay:3200ms">${flow.map((name, i) => `${i ? icon("arrow") : ""}<span>${name}</span>`).join("")}</div>
+    <p class="closing-choice reveal" style="--delay:3800ms">최종 의사결정은 사람에게.</p>
+    <button class="closing-replay reveal" data-replay style="--delay:4200ms">REPLAY ↺</button>`;
+}
+
+function schedule(callback, delay) {
+  if (state.reducedMotion) { callback(); return; }
+  const version = state.version;
+  const timer = window.setTimeout(() => {
+    sceneTimers.delete(timer);
+    if (version === state.version) callback();
+  }, delay);
+  sceneTimers.add(timer);
+}
+
+function clearSceneWork() {
+  sceneTimers.forEach(timer => clearTimeout(timer));
+  sceneTimers.clear();
+  numberAnimations.forEach(animation => cancelAnimationFrame(animation.frame));
+  numberAnimations.clear();
+}
+
+function animateNumber(id, target, options = {}) {
+  const element = document.getElementById(id);
+  if (!element) return;
+  const previous = numberAnimations.get(id);
+  if (previous) cancelAnimationFrame(previous.frame);
+  const from = Number(element.dataset.value || 0);
+  const { decimals = 0, prefix = "", duration = 1500 } = options;
+  const start = performance.now();
+  const version = state.version;
+  const animation = { frame: 0 };
+  const format = value => prefix + (decimals ? value.toFixed(decimals) : formatter.format(Math.round(value)));
+  const finish = value => { element.dataset.value = String(value); element.textContent = format(value); };
+  if (state.reducedMotion) { finish(target); return; }
+  function frame(now) {
+    if (version !== state.version || !element.isConnected) { numberAnimations.delete(id); return; }
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    finish(from + (target - from) * eased);
+    if (t < 1) animation.frame = requestAnimationFrame(frame);
+    else { finish(target); numberAnimations.delete(id); }
+  }
+  numberAnimations.set(id, animation);
+  animation.frame = requestAnimationFrame(frame);
+}
+
+function startSceneEffects() {
+  if (state.index === 0) schedule(() => animateNumber("capacity", DEMO_DATA.constrainedGuarantee, { duration: 1900 }), 4300);
+  if (state.index === 3) {
+    schedule(() => animateNumber("forecast-demand", DEMO_DATA.forecastDemandGrowth, { decimals: 1, prefix: "+" }), 2150);
+    schedule(() => animateNumber("forecast-pd", DEMO_DATA.pd, { decimals: 1 }), 2400);
+    schedule(() => animateNumber("forecast-loss", DEMO_DATA.expectedLoss), 2650);
+    schedule(() => animateNumber("forecast-recovery", DEMO_DATA.recoveryRate), 2900);
+  }
+  if (state.index === 5) {
+    schedule(() => animateNumber("scenario-count", DEMO_DATA.scenarios, { duration: 1700 }), 950);
+    schedule(() => document.getElementById("allocation-bars")?.classList.add("is-calculated"), 2350);
+  }
+  if (state.index === 6) schedule(updateStressNumbers, 1850);
+}
+
+function showScene(index, { announce = true } = {}) {
+  if (index < 0 || index >= SCENES.length) return;
+  clearSceneWork();
+  state.version += 1;
+  state.index = index;
+  state.elapsed = 0;
+  state.lastTick = performance.now();
+  const scene = SCENES[index];
+  const oldScene = elements.host.querySelector(".scene:not(.is-leaving)");
+  const moveFocus = oldScene?.contains(document.activeElement);
+  elements.host.querySelectorAll(".is-leaving").forEach(node => node.remove());
+  // An outgoing frame stays visible only for the crossfade. Remove it from the
+  // accessibility tree and keyboard order; duplicate numeric IDs are removed too.
+  if (oldScene) {
+    oldScene.classList.remove("is-entering");
+    oldScene.classList.add("is-leaving");
+    oldScene.inert = true;
+    oldScene.setAttribute("aria-hidden", "true");
+    oldScene.querySelectorAll("[id]").forEach(node => node.removeAttribute("id"));
+    window.setTimeout(() => oldScene.remove(), state.reducedMotion ? 0 : 800);
+  }
+  const nextScene = document.createElement("article");
+  nextScene.className = `scene is-entering${index === 6 ? " stress-scene" : ""}${index === 7 ? " closing-scene" : ""}`;
+  nextScene.setAttribute("aria-label", `${index + 1}번째 장면: ${scene.chapter}`);
+  nextScene.innerHTML = scene.render(scene);
+  elements.host.appendChild(nextScene);
+  elements.chapter.textContent = scene.chapter;
+  elements.number.innerHTML = `${String(index + 1).padStart(2, "0")} <span class="total">/ ${String(SCENES.length).padStart(2, "0")}</span>`;
+  elements.subtitle.textContent = scene.subtitle;
+  elements.prev.disabled = index === 0;
+  elements.next.disabled = index === SCENES.length - 1;
+  if (announce) elements.announcement.textContent = `${index + 1} / ${SCENES.length}. ${scene.chapter}. ${scene.title.join(" ")}`;
+  [...elements.timeline.children].forEach((button, i) => {
+    button.classList.toggle("is-complete", i < index);
+    if (i === index) button.setAttribute("aria-current", "step");
+    else button.removeAttribute("aria-current");
+    button.querySelector(".timeline-fill").style.transform = i < index ? "scaleX(1)" : "scaleX(0)";
+  });
+  startSceneEffects();
+  updatePlaybackUI();
+  updateTranscript();
+  if (moveFocus) elements.timeline.children[index].focus({ preventScroll: true });
+}
+
+function updateTranscript() {
+  const stress = DEMO_DATA.stress[state.stress];
+  const content = [
+    ["같은 재원, 서로 다른 목표", [`지역 지원 확대와 건전성 관리를 함께 고려합니다.`, `가용 재보증 ${formatter.format(DEMO_DATA.availableGuarantee)} → ${formatter.format(DEMO_DATA.constrainedGuarantee)}억원 (가상 예시)`]],
+    ["지역의 변화에서 위험 신호를 발견", [`가상 뉴스: ${DEMO_DATA.news.region} 주요 제조사업장 ${DEMO_DATA.news.months}개월 생산중단`, "전북의 제조업과 운송·음식·숙박업에 영향이 퍼집니다."]],
+    ["뉴스를 구조화된 Risk Event로 변환", [`${DEMO_DATA.news.region} · ${DEMO_DATA.news.event} · ${DEMO_DATA.news.months}개월`, "직접 영향: 제조업 / 2차 영향: 운송·음식·숙박", `추출 신뢰도 ${DEMO_DATA.news.confidence}% (가상 예시)`]],
+    ["Forecast Engine의 가상 예측", [`3개월 보증수요 +${DEMO_DATA.forecastDemandGrowth}% / 예상 PD ${DEMO_DATA.pd}%`, `예상손실 ${DEMO_DATA.expectedLoss}억원 / 예상 회수율 ${DEMO_DATA.recoveryRate}%`]],
+    ["정책 언어를 계산 가능한 조건으로", ["비수도권 지원 ≥ 정책 목표", "예상손실 ≤ 기준안 / 건설업 Exposure ≤ 집중 한도", "중저신용 지원 ≥ 기존 수준 / 총 재보증 ≤ 가용 여력"]],
+    ["세 가지 대안을 담당자가 선택", [`${formatter.format(DEMO_DATA.scenarios)}개 가상 시나리오 · ${formatter.format(DEMO_DATA.availableGuarantee)}억원 여력`, "안정형: 손실·지원 ↓ / 균형형: 손실·지원 ↔", `지원확대형: 지원·위험 ↑ / 현재 선택: ${PORTFOLIOS[state.portfolio].name}`]],
+    ["충격 이후의 가상 가용 여력 비교", [`${stress.event} · 현재 계획 ${formatter.format(stress.current)}억원`, `${PORTFOLIOS[state.portfolio].comparison} ${formatter.format(stress[state.portfolio])}억원`, "구조적 악화는 한도 조정 검토, 일시적 충격은 지원 유지·확대 가능"]],
+    ["위험 측정에서 정책금융 설계로", ["SIGNAL → FORECAST → POLICY → OPTIMIZE → STRESS", "최종 의사결정은 사람에게."]],
+  ][state.index];
+  const host = document.getElementById("transcript-content");
+  host.replaceChildren();
+  const heading = document.createElement("p");
+  heading.textContent = content[0];
+  const list = document.createElement("ul");
+  content[1].forEach(line => { const item = document.createElement("li"); item.textContent = line; list.appendChild(item); });
+  host.append(heading, list);
+}
+
+function updatePlaybackUI() {
+  elements.toggle.setAttribute("aria-pressed", String(state.autoplay));
+  elements.toggle.setAttribute("aria-label", state.autoplay ? "자동재생 일시정지" : "자동재생 시작");
+  elements.playIcon.textContent = state.autoplay ? "Ⅱ" : "▷";
+  elements.playLabel.textContent = state.autoplay ? "자동재생" : "재생";
+}
+
+function pause() { state.autoplay = false; updatePlaybackUI(); }
+
+function navigate(index) { pause(); showScene(index); }
+
+function replay() {
+  state.portfolio = "balanced";
+  state.stress = "construction";
+  state.autoplay = !state.reducedMotion;
+  showScene(0);
+}
+
+function selectPortfolio(key) {
+  if (!PORTFOLIOS[key]) return;
+  pause();
+  state.portfolio = key;
+  elements.host.querySelectorAll("[data-portfolio]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.portfolio === key)));
+  const bars = document.getElementById("allocation-bars");
+  bars?.classList.add("is-calculated");
+  bars?.querySelectorAll(".allocation-bar").forEach((bar, i) => bar.style.setProperty("--target-height", `${DEMO_DATA.allocations[key][i]}%`));
+  elements.announcement.textContent = `${PORTFOLIOS[key].name} 선택. 다음 장면에서 이 대안의 가상 스트레스 결과를 비교합니다. 최종 선택은 담당자입니다.`;
+  updateTranscript();
+}
+
+function updateStressNumbers() {
+  const stress = DEMO_DATA.stress[state.stress];
+  animateNumber("stress-current", stress.current, { duration: 1400 });
+  animateNumber("stress-proposal", stress[state.portfolio], { duration: 1400 });
+}
+
+function selectStress(key) {
+  if (!DEMO_DATA.stress[key]) return;
+  pause();
+  // Cancel the scene's initial shock so it cannot supersede a manual selection.
+  sceneTimers.forEach(timer => clearTimeout(timer));
+  sceneTimers.clear();
+  state.stress = key;
+  document.getElementById("shock-event").textContent = DEMO_DATA.stress[key].event;
+  elements.host.querySelectorAll("[data-stress]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.stress === key)));
+  updateStressNumbers();
+  const stress = DEMO_DATA.stress[key];
+  elements.announcement.textContent = `가상 시뮬레이션. ${stress.event}. 현재 계획 가용 여력 ${formatter.format(stress.current)}억원, ${PORTFOLIOS[state.portfolio].comparison} ${formatter.format(stress[state.portfolio])}억원.`;
+  updateTranscript();
+}
+
+SCENES.forEach((scene, index) => {
+  const button = document.createElement("button");
+  button.className = "timeline-button";
+  button.setAttribute("aria-label", `${index + 1}번째 장면: ${scene.chapter}`);
+  button.innerHTML = '<span class="timeline-track"><span class="timeline-fill"></span></span>';
+  button.addEventListener("click", () => navigate(index));
+  elements.timeline.appendChild(button);
+});
+
+elements.prev.addEventListener("click", () => navigate(state.index - 1));
+elements.next.addEventListener("click", () => navigate(state.index + 1));
+elements.toggle.addEventListener("click", () => {
+  if (state.autoplay) pause();
+  else if (state.index === SCENES.length - 1 && state.elapsed >= SCENES[state.index].duration) {
+    state.autoplay = true;
+    showScene(0);
+  } else { state.autoplay = true; state.lastTick = performance.now(); updatePlaybackUI(); }
+});
+document.getElementById("replay").addEventListener("click", replay);
+document.getElementById("brand-replay").addEventListener("click", event => { event.preventDefault(); replay(); });
+document.getElementById("mobile-transcript").addEventListener("click", event => { if (event.target.closest("summary")) pause(); });
+
+elements.stage.addEventListener("click", event => {
+  const target = event.target.closest("button, a");
+  if (target?.dataset.portfolio) selectPortfolio(target.dataset.portfolio);
+  else if (target?.dataset.stress) selectStress(target.dataset.stress);
+  else if (target?.hasAttribute("data-replay")) {
+    // The in-scene replay disappears on navigation; move focus to a stable button.
+    document.getElementById("replay").focus({ preventScroll: true });
+    replay();
+  } else if (!target) {
+    const bounds = elements.stage.getBoundingClientRect();
+    navigate(state.index + (event.clientX - bounds.left < bounds.width / 2 ? -1 : 1));
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.repeat) return;
+  if (event.key === "Tab") { pause(); return; }
+  if (event.target.closest("input, textarea, select, [contenteditable='true']")) return;
+  // Space on a focused control keeps its native activation behavior.
+  if (event.code === "Space" && event.target.closest("button, a, summary")) return;
+  if (event.code === "Space" || event.key === "ArrowRight") { event.preventDefault(); navigate(state.index + 1); }
+  else if (event.key === "ArrowLeft") { event.preventDefault(); navigate(state.index - 1); }
+});
+
+document.addEventListener("visibilitychange", () => {
+  // Hidden tabs do not silently consume a presentation; returning resumes the
+  // remaining scene time if the viewer had not paused manually.
+  state.lastTick = performance.now();
+});
+
+motionQuery.addEventListener("change", event => {
+  state.reducedMotion = event.matches;
+  if (event.matches) pause();
+  // Re-render to settle pending numeric effects without motion.
+  showScene(state.index, { announce: false });
+});
+
+function tick(now) {
+  const delta = Math.max(0, now - state.lastTick);
+  state.lastTick = now;
+  if (state.autoplay && !document.hidden) {
+    state.elapsed += delta;
+    if (state.elapsed >= SCENES[state.index].duration) {
+      if (state.index < SCENES.length - 1) showScene(state.index + 1);
+      else { state.elapsed = SCENES[state.index].duration; pause(); }
+    }
+  }
+  const fill = elements.timeline.children[state.index]?.querySelector(".timeline-fill");
+  if (fill) fill.style.transform = `scaleX(${Math.min(state.elapsed / SCENES[state.index].duration, 1)})`;
+  requestAnimationFrame(tick);
+}
+
+showScene(0);
+requestAnimationFrame(tick);
+    </script>
+    <!-- REBALANCE:SCRIPT:END -->
   </body>
 </html>
