@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#10332C">
+    <meta name="description" content="Re:Balance AI — 지역경제 신호를 정책금융의 선택지로. 80초 인터랙티브 모션그래픽 데모.">
+    <title>Re:Balance AI · 정책금융을 설계하는 AI</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310332C'/%3E%3Cpath d='M17 24h30l-9-9M47 40H17l9 9' stroke='%23B9DFC4' stroke-width='5' fill='none'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <symbol id="icon-balance" viewBox="0 0 32 32"><path d="M5 10h22l-6-6M27 22H5l6 6"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+        <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+        <symbol id="icon-bank" viewBox="0 0 48 48"><path d="m8 17 16-9 16 9H8Zm5 6v13m11-13v13m11-13v13M8 40h32"/></symbol>
+        <symbol id="icon-shield" viewBox="0 0 48 48"><path d="m24 7 15 6v12c0 9-15 16-15 16S9 34 9 25V13l15-6Z"/><path d="m17 24 5 5 10-11"/></symbol>
+        <symbol id="icon-document" viewBox="0 0 48 48"><path d="M12 7h17l8 8v26H12V7Zm17 0v9h8M18 23h13M18 29h13M18 35h7"/></symbol>
+        <symbol id="icon-coin" viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><path d="M17 20h14m-14 8h14m-7-14v20"/></symbol>
+        <symbol id="icon-trend" viewBox="0 0 48 48"><path d="M10 36V12m0 24h29M15 29l9-10 6 5 9-13m-9 0h9v9"/></symbol>
+        <symbol id="object-pool" viewBox="0 0 320 170">
+          <rect x="8" y="26" width="304" height="140" rx="23" fill="var(--dark)"/>
+          <rect x="8" y="16" width="304" height="140" rx="23" fill="var(--mint)"/>
+          <path d="M31 16h258c13 0 23 10 23 23v9H8v-9c0-13 10-23 23-23Z" fill="var(--cream)"/>
+          <path d="M141 32h38" stroke="var(--muted)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="280" cy="125" r="5" fill="var(--dark)"/>
+        </symbol>
+      </defs>
+    </svg>
+
+    <main class="experience" aria-label="Re:Balance AI 인터랙티브 제품 데모">
+      <header class="masthead">
+        <a class="wordmark" href="#" id="brand-replay" aria-label="Re:Balance AI 처음부터 재생">
+          <svg class="icon brand-icon" aria-hidden="true"><use href="#icon-balance"/></svg>
+          <span>Re:Balance <span class="wordmark-ai">AI</span></span>
+        </a>
+        <span class="masthead-note">정책금융의 다음 균형</span>
+      </header>
+
+      <section class="stage" id="stage" aria-label="8개 장면의 모션그래픽" aria-describedby="instructions">
+        <div class="orbit orbit-one" aria-hidden="true"></div>
+        <div class="orbit orbit-two" aria-hidden="true"></div>
+        <div class="stage-meta">
+          <span id="chapter">딜레마</span>
+          <span class="simulation-label">DEMO SIMULATION</span>
+          <span id="scene-number">01 <span class="total">/ 08</span></span>
+        </div>
+        <div class="scene-host" id="scene-host"></div>
+        <button class="edge-nav edge-prev" id="edge-prev" aria-label="이전 장면" disabled><span>‹</span></button>
+        <button class="edge-nav edge-next" id="edge-next" aria-label="다음 장면"><span>›</span></button>
+        <p class="stage-subtitle" id="stage-subtitle"></p>
+      </section>
+
+      <details class="mobile-transcript" id="mobile-transcript">
+        <summary>내용 크게 보기 <span aria-hidden="true">＋</span></summary>
+        <div id="transcript-content"></div>
+      </details>
+
+      <footer class="transport">
+        <div class="playback">
+          <button class="play-toggle" id="play-toggle" aria-label="자동재생 일시정지" aria-pressed="true"><span id="play-icon" aria-hidden="true">Ⅱ</span><span id="play-label">자동재생</span></button>
+          <span id="runtime">80 SEC</span>
+        </div>
+        <nav class="timeline" id="timeline" aria-label="장면 선택"></nav>
+        <button class="replay" id="replay">REPLAY <span aria-hidden="true">↺</span></button>
+      </footer>
+      <div class="experience-notes">
+        <p id="instructions"><span class="desktop-hint">← → / Space로 이동</span><span class="mobile-hint">화면 양쪽을 터치해 이동</span> · 직접 조작하면 자동재생이 멈춥니다</p>
+        <p>모든 뉴스·수치는 가상 예시입니다.</p>
+      </div>
+      <p class="sr-only" id="scene-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
+      <noscript><p class="noscript">이 데모를 보려면 브라우저의 JavaScript를 켜 주세요.</p></noscript>
+    </main>
+  </body>
+</html>
