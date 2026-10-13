@@ -222,6 +222,68 @@ button:disabled { cursor: default; }
 .closing-choice { font-size: 1cqw; color: var(--cream); margin-top: 2cqw; }
 .closing-replay { font-size: .8cqw; color: var(--mint); padding: .7cqw 1cqw; letter-spacing: .13em; }
 
+/* The first three chapters use a continuous SVG story timeline. Coordinates,
+   shape changes and word extraction are driven by app.js, including mobile. */
+.story-art { margin-top: 1.4cqw; }
+.story-svg { display: block; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.story-svg text { font-family: inherit; }
+.story-path { fill: none; stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 6; opacity: .45; }
+.story-path-risk { stroke: var(--risk); }
+.story-path-return { stroke: var(--mint); opacity: 0; }
+.store-roof { fill: var(--mint); stroke: var(--mint); stroke-width: 2; }
+.store-body { fill: var(--background); stroke: var(--mint); stroke-width: 2; }
+.store-detail { fill: none; stroke: var(--mint); stroke-width: 1.7; stroke-linecap: round; }
+.store-window { fill: var(--mint); }
+.store-ground { fill: none; stroke: var(--muted); stroke-width: 1; }
+.story-store { opacity: 0; }
+.story-pool-label { fill: var(--dark); font-size: 16px; text-anchor: middle; }
+.story-pool-value { fill: var(--dark); font-size: 44px; font-weight: 700; text-anchor: middle; font-variant-numeric: tabular-nums; }
+.story-pool-unit { fill: var(--dark); font-size: 12px; text-anchor: middle; }
+.reserve-unit { fill: var(--dark); opacity: .22; }
+.story-shield { fill: var(--background); stroke: var(--mint); stroke-width: 2; }
+.story-shield-check { fill: none; stroke: var(--mint); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.loss-unit { fill: var(--risk); }
+.resource-token { fill: var(--gold); stroke: var(--background); stroke-width: 1.5; opacity: 0; }
+.loss-token { fill: var(--risk); opacity: 0; }
+.return-token { fill: var(--mint); opacity: 0; }
+.story-goal { fill: var(--cream); font-size: 19px; font-weight: 500; text-anchor: middle; }
+.story-mint { fill: var(--mint); }
+.story-orange { fill: var(--risk); }
+.story-caption { fill: var(--muted); font-size: 13px; text-anchor: middle; letter-spacing: .03em; }
+.minor-region { fill: var(--muted); opacity: .28; }
+.flow-region-dot { fill: var(--muted); transition: fill 900ms var(--ease); }
+.flow-region-ring { fill: none; stroke: var(--mint); stroke-width: 1.2; opacity: .18; transition: stroke 900ms var(--ease); }
+.flow-region-label { fill: var(--cream); font-size: 23px; text-anchor: middle; }
+.flow-risk-mark { fill: var(--dark); font-size: 19px; font-weight: 700; text-anchor: middle; opacity: 0; }
+.region-flow-trace { fill: none; stroke: var(--mint); stroke-width: 1.8; stroke-linecap: round; }
+.flow-packet { fill: var(--cream); stroke: var(--background); stroke-width: 2; opacity: 0; }
+.flow-packet-tail { fill: var(--mint); opacity: 0; }
+.industry-label { fill: var(--risk); font-size: 14px; text-anchor: middle; }
+.news-sheet { fill: var(--cream); }
+.news-fold { fill: var(--mint); }
+.news-eyebrow { fill: var(--dark); font-size: 13px; letter-spacing: .02em; }
+.news-headline { fill: var(--dark); font-size: 24px; font-weight: 650; }
+.news-body { fill: var(--dark); font-size: 15px; }
+.news-rule { fill: none; stroke: var(--muted); stroke-width: 1; }
+.news-scan { fill: var(--mint); opacity: 0; }
+.news-scan-edge { fill: none; stroke: var(--muted); stroke-width: 1.2; opacity: 0; }
+.extraction-gate { fill: none; stroke: var(--muted); stroke-width: 1.5; opacity: 0; }
+.extraction-gate text { fill: var(--muted); stroke: none; font-size: 12px; text-anchor: middle; }
+.risk-record-row { opacity: 0; }
+.risk-record-label { fill: var(--muted); font-size: 16px; }
+.risk-record-value { fill: var(--cream); font-size: 19px; font-weight: 500; opacity: 0; }
+.risk-record-row[data-risk-row="4"] .risk-record-value { font-size: 16px; }
+.risk-record-warning { fill: var(--risk); }
+.risk-record-rule { fill: none; stroke: var(--muted); stroke-width: .7; opacity: .25; }
+.extracted-word { opacity: 0; }
+.extracted-word rect { fill: var(--mint); }
+.extracted-word text { fill: var(--dark); font-size: 18px; font-weight: 600; }
+.extraction-verified { fill: none; stroke: var(--mint); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0; }
+.event-seal { opacity: 0; }
+.event-seal circle { fill: none; stroke: var(--mint); stroke-width: 1.5; }
+.event-seal path { fill: none; stroke: var(--mint); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.event-seal text { fill: var(--mint); font-size: 19px; text-anchor: middle; }
+
 @keyframes scene-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes scene-leave { to { opacity: 0; transform: translateY(-8px); } }
 @keyframes reveal { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -254,6 +316,18 @@ button:disabled { cursor: default; }
   .scene-kicker { font-size: 2.1cqw; margin-top: 1.1cqw; }
   .stage-subtitle { bottom: 3.7%; left: 7%; right: 7%; font-size: max(8px, 1.9cqw); letter-spacing: 0; }
   .scene-art { margin-top: 1.5cqw; }
+  .story-art { margin-top: 1.2cqw; }
+  .dilemma-story { margin-top: .5cqw; }
+  .story-caption { font-size: 16px; }
+  .story-goal { font-size: 23px; }
+  .story-pool-label { font-size: 20px; }
+  .story-pool-unit { font-size: 16px; }
+  .story-pool-value { font-size: 50px; }
+  .flow-region-label { font-size: 27px; }
+  .news-eyebrow { font-size: 15px; }
+  .risk-record-label { font-size: 22px; }
+  .risk-record-value { font-size: 23px; }
+  .risk-record-row[data-risk-row="4"] .risk-record-value { font-size: 20px; }
   .pool { width: 25cqw; }
   .pool-label { font-size: 2cqw; }
   .pool-value { font-size: 4cqw; margin-top: .3cqw; }

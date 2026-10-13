@@ -75,6 +75,7 @@ const elements = {
 const formatter = new Intl.NumberFormat("ko-KR");
 const sceneTimers = new Set();
 const numberAnimations = new Map();
+let storyMotion = null;
 
 function icon(name, className = "") {
   return `<svg class="icon ${className}" aria-hidden="true"><use href="#icon-${name}"/></svg>`;
@@ -97,52 +98,97 @@ function newsMarkup(className = "") {
 
 function dilemmaScene(scene) {
   return `${titleMarkup(scene)}<p class="scene-kicker reveal" style="--delay:700ms">같은 재원 · 서로 다른 목표</p>
-    <div class="scene-art dilemma-art">
-      <div class="goal reveal" style="--delay:1500ms">${icon("bank")}<p>지역 지원</p><span class="up">↑</span></div>
-      <div class="goal-line left reveal" style="--delay:1900ms" aria-hidden="true"></div>
-      <div class="reveal" style="--delay:1000ms">${poolMarkup("capacity", DEMO_DATA.availableGuarantee)}</div>
-      <div class="goal-line right reveal" style="--delay:1900ms" aria-hidden="true"></div>
-      <div class="goal reveal" style="--delay:1750ms">${icon("shield")}<p>건전성 관리</p><span class="up">↑</span></div>
-      <div class="capacity-note reveal" style="--delay:4500ms">여력은 한정되어 있습니다.</div>
+    <div class="scene-art story-art dilemma-story">
+      <svg class="story-svg" viewBox="0 0 900 280" role="img" aria-label="한정된 재보증 풀에서 지역 상점으로 재원이 이동하며 지원이 늘어나고, 방패가 손실 흐름을 차단하며 손실 표시가 줄어드는 개념 애니메이션">
+        <path class="story-path" data-support-path d="M308 150 C270 215 214 215 166 162"/>
+        <path class="story-path story-path-risk" data-loss-path d="M594 150 C660 105 713 105 818 142"/>
+        <path class="story-path story-path-return" data-return-path d="M726 140 C709 225 649 229 596 165"/>
+        <g class="story-stores" data-store-cluster>
+          ${[0, 1, 2].map((i) => `<g transform="translate(${69 + i * 55} 100)"><g data-store="${i}" class="story-store"><path d="M0 24 7 8h34l7 16" class="store-roof"/><rect x="3" y="24" width="42" height="49" rx="3" class="store-body"/><path d="M0 24h48M12 24v8m12-8v8m12-8v8" class="store-detail"/><rect x="11" y="43" width="12" height="12" rx="1" class="store-window"/><path d="M30 73V45h10v28" class="store-detail"/></g></g>`).join("")}
+          <path d="M61 177h177" class="store-ground"/>
+        </g>
+        <g data-pool-graphic>
+          <use href="#object-pool" x="290" y="61" width="320" height="170"/>
+          <text class="story-pool-label" x="450" y="149">가용 재보증</text>
+          <text class="story-pool-value" x="450" y="191" id="capacity" data-value="${DEMO_DATA.availableGuarantee}">${formatter.format(DEMO_DATA.availableGuarantee)}</text>
+          <text class="story-pool-unit" x="450" y="214">억원</text>
+          <g data-reserve-fill>${Array.from({ length: 8 }, (_, i) => `<rect x="${322 + i * 32}" y="107" width="24" height="5" rx="2" class="reserve-unit"/>`).join("")}</g>
+        </g>
+        <g transform="translate(758 94)"><g data-protection-shield><path d="m0 0 30 12v26c0 21-30 37-30 37S-30 59-30 38V12L0 0Z" class="story-shield"/><path d="m-12 35 10 10 17-22" class="story-shield-check"/></g></g>
+        <g data-loss-stack>${[0, 1, 2].map(i => `<rect x="802" y="${130 + i * 14}" width="${35 - i * 5}" height="8" rx="3" class="loss-unit" data-loss-unit="${i}"/>`).join("")}</g>
+        ${[0, 1, 2].map(i => `<circle r="7" class="resource-token" data-resource-token="${i}"/>`).join("")}
+        ${[0, 1].map(i => `<circle r="5" class="loss-token" data-loss-token="${i}"/>`).join("")}
+        <circle r="5" class="return-token" data-return-token/>
+        <text class="story-goal" x="148" y="222">지역 지원 <tspan class="story-mint">↑</tspan></text>
+        <text class="story-goal" x="772" y="222">손실 <tspan class="story-orange">↓</tspan></text>
+        <text class="story-caption" x="450" y="271" data-motion-caption>한정된 재원, 두 가지 목표</text>
+      </svg>
     </div>`;
 }
 
 function signalScene(scene) {
-  // Symbolic regional nodes only: this is deliberately not a geographic map.
-  const names = { 1: "서울", 4: "경기", 8: "전북", 11: "충남", 15: "부산" };
-  const points = Array.from({ length: 17 }, (_, i) => {
-    const angle = Math.PI * (0.12 + (i / 16) * 0.76);
-    return { x: 365 - Math.cos(angle) * 282, y: 72 + Math.sin(angle) * 141 };
-  });
-  const riskPoint = points[8];
-  const nodes = points.map((point, i) => `<g class="reveal" style="--delay:${650 + i * 45}ms">
-    ${i === 8 ? `<circle class="risk-outline" cx="${point.x}" cy="${point.y}" r="17"/>` : ""}
-    <circle class="region-node ${i === 8 ? "region-risk" : ""}" cx="${point.x}" cy="${point.y}" r="${i === 8 ? 10 : 5}"/>
-    ${i === 8 ? `<text class="risk-mark" x="${point.x}" y="${point.y + 5}">!</text>` : ""}
-    ${names[i] ? `<text class="region-name" x="${point.x}" y="${point.y + 33}">${names[i]}</text>` : ""}</g>`).join("");
-  const route = `M 210 105 C 260 112, 285 180, ${riskPoint.x} ${riskPoint.y - 20}`;
-  return `${titleMarkup(scene)}<div class="scene-art signal-art">
-    <svg class="region-network" viewBox="0 0 730 270" role="img" aria-label="17개 지역 노드 중 전북에 위험 신호가 발생해 제조·운송·음식·숙박업으로 영향이 퍼지는 가상 예시">
-      <path class="event-route" d="${route}"/><path class="event-trace" d="${route}"/>
-      <path class="event-route reveal" style="--delay:2400ms" d="M382 204 Q 467 167 555 114 M382 204 Q 480 191 555 155 M382 204 Q 480 216 555 197"/>
-      ${nodes}
+  const regions = [["서울", 90, 169], ["경기", 260, 125], ["전북", 450, 165], ["충남", 640, 125], ["부산", 810, 169]];
+  const route = "M90 169 C135 169 194 125 260 125 S384 165 450 165 S574 125 640 125 S765 169 810 169";
+  return `${titleMarkup(scene)}<div class="scene-art story-art signal-story">
+    <svg class="story-svg" viewBox="0 0 900 300" role="img" aria-label="서울, 경기, 전북, 충남, 부산을 따라 신호가 부드럽게 이동하는 지역 순차 탐색. 전북의 가상 뉴스가 제조·운송·음식·숙박 위험 신호로 연결됩니다. 지역 간 실제 전염 경로를 뜻하지 않는 개념도입니다.">
+      <path class="story-path region-flow-base" d="${route}"/>
+      <path class="region-flow-trace" data-region-path d="${route}"/>
+      ${Array.from({ length: 12 }, (_, i) => `<circle class="minor-region" cx="${108 + i * 61}" cy="${211 + Math.sin(i / 11 * Math.PI) * 25}" r="3"/>`).join("")}
+      ${regions.map(([name, x, y], i) => `<g class="flow-region" data-region="${i}" transform="translate(${x} ${y})"><circle class="flow-region-ring" r="18"/><circle class="flow-region-dot" r="8"/><text class="flow-region-label" y="39">${name}</text>${i === 2 ? '<text class="flow-risk-mark" y="6">!</text>' : ""}</g>`).join("")}
+      <g data-regional-news transform="translate(345 3) scale(.62)">${storyNewsMarkup()}</g>
+      <path class="story-path" data-news-route d="M450 141 C450 146 450 151 450 156"/>
+      <circle r="4" class="loss-token" data-news-signal/>
+      ${[0, 1, 2].map(i => `<g data-industry="${i}"><path class="story-path industry-branch" data-industry-path="${i}" d="M465 172 Q${522 + i * 48} 214 ${585 + i * 87} 241"/><circle class="loss-token" data-industry-token="${i}" r="3"/><text class="industry-label" x="${575 + i * 99}" y="268">${["제조업 ↑", "운송업 ↑", "음식·숙박 ↑"][i]}</text></g>`).join("")}
+      <circle class="flow-packet" r="7" data-flow-packet/>
+      <circle class="flow-packet-tail" r="3" data-flow-tail/>
+      <text class="story-caption" x="450" y="297" data-motion-caption>17개 지역의 경제 신호를 순차 탐색</text>
     </svg>
-    ${newsMarkup("news-small reveal")}
-    <div class="industry-effects"><span class="reveal" style="--delay:2450ms">제조업 <b>↑</b></span><span class="reveal" style="--delay:2700ms">운송업 <b>↑</b></span><span class="reveal" style="--delay:2950ms">음식·숙박 <b>↑</b></span></div>
   </div>`;
+}
+
+function storyNewsMarkup() {
+  return `<path class="news-sheet" data-news-sheet d="M0 0H313L340 27V215Q340 228 327 228H13Q0 228 0 215Z"/>
+    <path class="news-fold" d="M313 0v27h27"/>
+    <g data-news-copy>
+      <text class="news-eyebrow" x="26" y="33">지역 경제 신호 · 가상 뉴스</text>
+      <text class="news-headline" x="26" y="82"><tspan data-keyword="region">${DEMO_DATA.news.region}</tspan><tspan dx="9">주요 제조사업장</tspan></text>
+      <text class="news-headline" x="26" y="119"><tspan data-keyword="duration">${DEMO_DATA.news.months}개월</tspan><tspan dx="15" data-keyword="event">${DEMO_DATA.news.event}</tspan></text>
+      <text class="news-body" x="26" y="158"><tspan data-keyword="direct">제조업</tspan><tspan dx="7">현장 변화</tspan></text>
+      <text class="news-body" x="26" y="184"><tspan data-keyword="secondary">운송 · 음식 · 숙박</tspan><tspan dx="7">영향</tspan></text>
+      <path class="news-rule" d="M26 204h180"/>
+    </g>`;
 }
 
 function extractionScene(scene) {
   const fields = [
     ["지역", DEMO_DATA.news.region], ["Event", DEMO_DATA.news.event], ["지속기간", `${DEMO_DATA.news.months}개월`],
     ["직접 영향", "제조업"], ["2차 영향", "운송 · 음식 · 숙박"], ["Risk", '<span class="risk-value">↑ 위험 신호</span>'],
-    ["Confidence", `${DEMO_DATA.news.confidence}% <span class="check">${icon("check")}</span>`],
+    ["Confidence", `${DEMO_DATA.news.confidence}%`],
   ];
-  return `${titleMarkup(scene)}<div class="scene-art extraction-art">
-    ${newsMarkup("reveal")}
-    <span class="connector reveal" style="--delay:700ms" aria-hidden="true"></span>
-    <dl class="event-fields">${fields.map(([label, value], i) => `<div class="event-field reveal" style="--delay:${1000 + i * 250}ms"><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>
-    <span class="micro-label reveal" style="--delay:2900ms">DEMO SIMULATION</span>
+  const keywords = [
+    { key: "region", value: DEMO_DATA.news.region, from: [123, 103], to: [757, 55], width: 67, row: 0 },
+    { key: "event", value: DEMO_DATA.news.event, from: [214, 140], to: [766, 85], width: 99, row: 1 },
+    { key: "duration", value: `${DEMO_DATA.news.months}개월`, from: [123, 140], to: [757, 115], width: 67, row: 2 },
+    { key: "direct", value: "제조업", from: [118, 179], to: [757, 145], width: 77, row: 3 },
+    { key: "secondary", value: "운송 · 음식 · 숙박", from: [172, 205], to: [790, 175], width: 152, row: 4 },
+  ];
+  return `${titleMarkup(scene)}<div class="scene-art story-art extraction-story">
+    <svg class="story-svg" viewBox="0 0 900 300" role="img" aria-label="가상 뉴스의 군산, 생산중단, 3개월, 제조업, 2차 영향 문구를 스캔하고 추출합니다. 문구가 뉴스에서 분리되어 지역, Event, 지속기간, 영향 변수로 이동하며 Risk Event로 변환됩니다.">
+      <g data-extraction-document transform="translate(280 21)">
+        ${storyNewsMarkup()}
+        <rect class="news-scan" data-news-scan x="13" y="51" width="314" height="32" rx="3"/>
+        <path class="news-scan-edge" data-news-scan-edge d="M13 51h314"/>
+      </g>
+      <path class="story-path extraction-path" data-extraction-path d="M410 145H558"/>
+      <g class="extraction-gate" data-extraction-gate transform="translate(469 129)"><path d="M-20-20h-7v54h7m40-54h7v54h-7"/><path d="M-12 0h24m-12-12v24"/><text y="57">LLM Extraction</text></g>
+      <g data-risk-record>
+        ${fields.map(([label, value], i) => `<g class="risk-record-row" data-risk-row="${i}" transform="translate(577 ${55 + i * 30})"><text class="risk-record-label">${label}</text><text class="risk-record-value ${i === 5 ? "risk-record-warning" : ""}" x="${i === 4 ? 122 : 147}" data-risk-value="${i}">${value.replace(/<[^>]*>/g, "")}</text>${i < 6 ? '<path class="risk-record-rule" d="M0 13h288"/>' : ""}</g>`).join("")}
+        <path class="extraction-verified" data-extraction-check d="m819 232 7 7 15-17"/>
+      </g>
+      ${keywords.map(item => `<g class="extracted-word" data-extracted-word="${item.key}" data-from="${item.from.join(",")}" data-to="${item.to.join(",")}" data-row="${item.row}"><rect x="${-item.width / 2}" y="-17" width="${item.width}" height="31" rx="4"/><text text-anchor="middle" y="5">${item.value}</text></g>`).join("")}
+      <g class="event-seal" data-event-seal transform="translate(244 133)"><circle r="37"/><path d="m-13 0 9 9 18-22"/><text y="65">Risk Event</text></g>
+      <text class="story-caption" x="450" y="292" data-motion-caption>한 장의 뉴스에서 출발합니다.</text>
+    </svg>
   </div>`;
 }
 
@@ -221,6 +267,7 @@ function schedule(callback, delay) {
 }
 
 function clearSceneWork() {
+  storyMotion = null;
   sceneTimers.forEach(timer => clearTimeout(timer));
   sceneTimers.clear();
   numberAnimations.forEach(animation => cancelAnimationFrame(animation.frame));
@@ -252,8 +299,215 @@ function animateNumber(id, target, options = {}) {
   animation.frame = requestAnimationFrame(frame);
 }
 
+// Continuous motion explains the idea: funds actually travel, regional signals
+// follow a curve, and words leave a document and become typed risk variables.
+// This timeline is independent of automatic scene navigation. Manual navigation
+// stops autoplay but allows the selected scene's explanation to finish.
+function unit(value) { return Math.max(0, Math.min(1, value)); }
+function progress(time, start, end) {
+  const p = unit((time - start) / (end - start));
+  return p * p * (3 - 2 * p);
+}
+function mix(from, to, p) { return from + (to - from) * p; }
+function opacity(element, value) { if (element) element.style.opacity = String(unit(value)); }
+function pathSampler(path) {
+  const length = path.getTotalLength();
+  return p => path.getPointAtLength(length * unit(p));
+}
+function placeToken(token, point, visibility) {
+  token.setAttribute("cx", point.x);
+  token.setAttribute("cy", point.y);
+  opacity(token, visibility);
+}
+function tokenVisibility(p) { return progress(p, 0, .14) * (1 - progress(p, .82, 1)); }
+function caption(root, text) {
+  const element = root.querySelector("[data-motion-caption]");
+  if (element.textContent !== text) element.textContent = text;
+}
+
+function createDilemmaMotion(root) {
+  const supportPath = pathSampler(root.querySelector("[data-support-path]"));
+  const lossPath = pathSampler(root.querySelector("[data-loss-path]"));
+  const returnPath = pathSampler(root.querySelector("[data-return-path]"));
+  const stores = [...root.querySelectorAll("[data-store]")];
+  const resources = [...root.querySelectorAll("[data-resource-token]")];
+  const losses = [...root.querySelectorAll("[data-loss-token]")];
+  const reserve = [...root.querySelectorAll(".reserve-unit")];
+  const lossUnits = [...root.querySelectorAll("[data-loss-unit]")];
+  const pool = root.querySelector("[data-pool-graphic]");
+  const shield = root.querySelector("[data-protection-shield]");
+  const shieldCheck = root.querySelector(".story-shield-check");
+  const returnToken = root.querySelector("[data-return-token]");
+  const returnLine = root.querySelector("[data-return-path]");
+  const capacity = root.querySelector("#capacity");
+  shieldCheck.style.strokeDasharray = "60";
+  return elapsed => {
+    const t = elapsed / 1000;
+    const support = progress(t, 2.4, 6);
+    const protection = progress(t, 4.3, 6.2);
+    opacity(pool, progress(t, .6, 1.5));
+    stores.forEach((store, i) => {
+      const grown = progress(t, i ? 2.1 + i * 1.3 : .85, i ? 3 + i * 1.3 : 1.65);
+      opacity(store, grown);
+      store.setAttribute("transform", `translate(24 73) scale(${mix(.86, 1, grown)} ${mix(.12, 1, grown)}) translate(-24 -73)`);
+    });
+    resources.forEach((token, i) => {
+      const p = unit((t - (2.2 + i * .8)) / 1.45);
+      placeToken(token, supportPath(progress(p, 0, 1)), tokenVisibility(p));
+    });
+    losses.forEach((token, i) => {
+      const p = unit((t - (2.15 + i * 2.35)) / 1.65);
+      placeToken(token, lossPath(progress(p, 0, 1) * (i ? .67 : 1)), tokenVisibility(p));
+    });
+    const returning = unit((t - 6.15) / 1.65);
+    placeToken(returnToken, returnPath(progress(returning, 0, 1)), tokenVisibility(returning));
+    opacity(returnLine, progress(t, 5.7, 6.3) * .6);
+    opacity(shield, mix(.28, 1, protection));
+    shield.setAttribute("transform", `scale(1 ${mix(.62, 1, protection)})`);
+    shieldCheck.style.strokeDashoffset = String(60 * (1 - protection));
+    const shrinking = progress(t, 5.1, 8);
+    lossUnits.forEach((bar, i) => {
+      bar.setAttribute("width", mix(35 - i * 5, i ? 0 : 10, shrinking));
+      opacity(bar, i ? 1 - shrinking : 1);
+    });
+    reserve.forEach((bar, i) => opacity(bar, i > 5 ? mix(.22, .035, support) : .22));
+    const value = Math.round(mix(DEMO_DATA.availableGuarantee, DEMO_DATA.constrainedGuarantee, support));
+    capacity.textContent = formatter.format(value);
+    capacity.dataset.value = String(value);
+    root.dataset.supportLevel = String(1 + Number(t >= 4.3) + Number(t >= 5.6));
+    root.dataset.lossLevel = String(3 - Number(t >= 6.5) - Number(t >= 8));
+    root.dataset.motionPhase = t < 2.2 ? "resource" : t < 4.5 ? "support" : t < 8 ? "protect" : "balanced";
+    caption(root, t < 2.2 ? "한정된 재원, 두 가지 목표" : t < 4.5 ? "재원이 이동하고, 지역 지원이 늘어납니다." : t < 8 ? "손실 흐름을 막고, 여력을 지킵니다." : "지원은 늘리고, 손실은 줄이고.");
+  };
+}
+
+function createSignalMotion(root) {
+  const line = root.querySelector("[data-region-path]");
+  const sample = pathSampler(line);
+  const length = line.getTotalLength();
+  const regions = [...root.querySelectorAll("[data-region]")];
+  const packet = root.querySelector("[data-flow-packet]");
+  const tail = root.querySelector("[data-flow-tail]");
+  const news = root.querySelector("[data-regional-news]");
+  const newsToken = root.querySelector("[data-news-signal]");
+  const newsSample = pathSampler(root.querySelector("[data-news-route]"));
+  const industries = [...root.querySelectorAll("[data-industry]")].map(group => ({ group, token: group.querySelector("[data-industry-token]"), sample: pathSampler(group.querySelector("[data-industry-path]")) }));
+  const fractions = [0, .237, .5, .763, 1];
+  const names = ["서울", "경기", "전북", "충남", "부산"];
+  line.style.strokeDasharray = String(length);
+  return elapsed => {
+    const t = elapsed / 1000;
+    const leg = Math.max(0, Math.min(3, Math.floor((t - 1.2) / 1.4)));
+    const withinLeg = progress(t, 1.2 + leg * 1.4, 2.6 + leg * 1.4);
+    const p = mix(fractions[leg], fractions[leg + 1], withinLeg);
+    line.style.strokeDashoffset = String(length * (1 - p));
+    opacity(line, progress(t, .7, 1.25) * .75);
+    placeToken(packet, sample(p), progress(t, 1, 1.3) * (1 - progress(t, 7.2, 7.6)));
+    placeToken(tail, sample(Math.max(0, p - .025)), progress(t, 1.2, 1.5) * (1 - progress(t, 7.1, 7.6)) * .7);
+    regions.forEach((region, i) => {
+      const arrived = progress(t, 1.2 + i * 1.4 - .2, 1.2 + i * 1.4 + .35);
+      const focus = Math.sin(Math.PI * unit((t - (1.2 + i * 1.4)) / .9));
+      opacity(region, mix(.35, 1, arrived));
+      region.querySelector(".flow-region-dot").setAttribute("r", 8 + focus * 3);
+      const ring = region.querySelector(".flow-region-ring");
+      ring.setAttribute("r", 18 + focus * 5);
+      opacity(ring, mix(.18, .6, arrived));
+    });
+    const risk = progress(t, 4.2, 5.3);
+    regions[2].querySelector(".flow-region-dot").style.fill = risk > .5 ? "var(--risk)" : "var(--muted)";
+    regions[2].querySelector(".flow-region-ring").style.stroke = risk > .5 ? "var(--risk)" : "var(--mint)";
+    opacity(regions[2].querySelector(".flow-risk-mark"), risk);
+    opacity(news, progress(t, 3.25, 4.15));
+    const newsP = unit((t - 4.1) / 1.2);
+    placeToken(newsToken, newsSample(newsP), tokenVisibility(newsP));
+    industries.forEach((item, i) => {
+      opacity(item.group, progress(t, 5.1 + i * .25, 6 + i * .25));
+      const branchP = unit((t - 5.3 - i * .35) / 1.6);
+      placeToken(item.token, item.sample(progress(branchP, 0, 1)), tokenVisibility(branchP));
+    });
+    const visited = Math.max(0, Math.min(4, Math.floor((t - 1.2) / 1.4)));
+    root.dataset.signalStop = names[visited];
+    root.dataset.motionPhase = t < 4.2 ? "regional-flow" : t < 7.3 ? "risk-detected" : "structured-signal";
+    caption(root, t < 4.2 ? "서울 → 경기 → 전북 → 충남 → 부산 · 순차 탐색" : t < 7.3 ? "전북의 신호를 발견하고, 업종별 영향을 연결합니다." : "17개 지역 신호 탐색 · 위치와 흐름은 개념도");
+  };
+}
+
+function createExtractionMotion(root) {
+  const documentGraphic = root.querySelector("[data-extraction-document]");
+  const copy = root.querySelector("[data-news-copy]");
+  const scan = root.querySelector("[data-news-scan]");
+  const scanEdge = root.querySelector("[data-news-scan-edge]");
+  const gate = root.querySelector("[data-extraction-gate]");
+  const rows = [...root.querySelectorAll("[data-risk-row]")];
+  const check = root.querySelector("[data-extraction-check]");
+  const seal = root.querySelector("[data-event-seal]");
+  const highlightGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  documentGraphic.insertBefore(highlightGroup, copy);
+  const words = [...root.querySelectorAll("[data-extracted-word]")].map(token => {
+    const row = Number(token.dataset.row);
+    const sourceWord = root.querySelector(`[data-keyword="${token.dataset.extractedWord}"]`);
+    const sourceBox = sourceWord.getBBox();
+    const destination = rows[row].querySelector("[data-risk-value]");
+    const destinationBox = destination.getBBox();
+    const highlight = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    for (const [name, value] of Object.entries({ x: sourceBox.x - 4, y: sourceBox.y - 2, width: sourceBox.width + 8, height: sourceBox.height + 4, rx: 3, fill: "var(--mint)" })) highlight.setAttribute(name, value);
+    highlightGroup.appendChild(highlight);
+    return { token, row, sourceWord, destination, highlight, from: { x: sourceBox.x + sourceBox.width / 2 + 70, y: sourceBox.y + sourceBox.height / 2 + 21 }, to: { x: destinationBox.x + destinationBox.width / 2 + 577, y: destinationBox.y + destinationBox.height / 2 + 55 + row * 30 } };
+  });
+  check.style.strokeDasharray = "45";
+  return elapsed => {
+    const t = elapsed / 1000;
+    const unfolded = progress(t, 1.1, 2.2);
+    const morphed = progress(t, 6.8, 8.4);
+    const x = mix(mix(280, 70, unfolded), 172, morphed);
+    documentGraphic.setAttribute("transform", `translate(${x} ${mix(21, 85, morphed)}) scale(${mix(1, .42, morphed)})`);
+    opacity(documentGraphic, progress(t, .5, 1.1) * (1 - morphed));
+    const scanY = mix(49, 189, progress(t, 1.7, 3.5));
+    scan.setAttribute("y", scanY);
+    scanEdge.setAttribute("d", `M13 ${scanY}h314`);
+    const scanVisible = progress(t, 1.6, 1.9) * (1 - progress(t, 3.5, 3.9));
+    opacity(scan, scanVisible * .45);
+    opacity(scanEdge, scanVisible);
+    opacity(gate, progress(t, 2.1, 2.8) * (1 - progress(t, 7, 8.1)));
+    opacity(root.querySelector("[data-extraction-path]"), progress(t, 2, 2.8) * .45);
+    rows.forEach((row, i) => opacity(row, progress(t, 2.1 + i * .08, 2.7 + i * .08)));
+    let extracted = 0;
+    words.forEach((word, i) => {
+      const start = 2.6 + i * .6;
+      const p = unit((t - start) / 1.55);
+      const eased = progress(p, 0, 1);
+      const q = 1 - eased;
+      // Cubic travel curves converge at the extraction gate before separating
+      // into each destination field. This is the actual text-to-variable action.
+      const wordX = q ** 3 * word.from.x + 3 * q ** 2 * eased * 430 + 3 * q * eased ** 2 * 520 + eased ** 3 * word.to.x;
+      const wordY = q ** 3 * word.from.y + 3 * q ** 2 * eased * 145 + 3 * q * eased ** 2 * 129 + eased ** 3 * word.to.y;
+      word.token.setAttribute("transform", `translate(${wordX} ${wordY}) scale(${mix(1, .94, eased)})`);
+      opacity(word.token, tokenVisibility(p));
+      opacity(word.sourceWord, 1 - .88 * progress(t, start, start + .3));
+      opacity(word.highlight, progress(t, start - .35, start) * .75);
+      opacity(word.destination, progress(t, start + 1.2, start + 1.55));
+      if (p === 1) extracted++;
+    });
+    opacity(rows[5].querySelector("[data-risk-value]"), progress(t, 6.6, 7.3));
+    opacity(rows[6].querySelector("[data-risk-value]"), progress(t, 7, 7.7));
+    const verified = progress(t, 7.3, 8.1);
+    opacity(check, verified);
+    check.style.strokeDashoffset = String(45 * (1 - verified));
+    opacity(seal, progress(t, 7.5, 8.6));
+    seal.setAttribute("transform", `translate(244 133) scale(${mix(.7, 1, progress(t, 7.5, 8.6))})`);
+    root.dataset.extractedCount = String(extracted);
+    root.dataset.motionPhase = t < 1.7 ? "news" : t < 3.5 ? "scan" : t < 6.6 ? "extract" : t < 8.4 ? "compile" : "risk-event";
+    caption(root, t < 1.7 ? "한 장의 뉴스에서 출발합니다." : t < 3.5 ? "문장 속 지역 · 사건 · 기간을 읽습니다." : t < 6.6 ? "핵심 정보가 분리되어 변수로 이동합니다." : t < 8.4 ? "영향과 신뢰도를 연결하고 위험 변수로 변환합니다." : "뉴스 → 구조화된 Risk Event · DEMO SIMULATION");
+  };
+}
+
 function startSceneEffects() {
-  if (state.index === 0) schedule(() => animateNumber("capacity", DEMO_DATA.constrainedGuarantee, { duration: 1900 }), 4300);
+  if (state.index < 3) {
+    const root = elements.host.querySelector(".scene:not(.is-leaving)");
+    const createMotion = [createDilemmaMotion, createSignalMotion, createExtractionMotion][state.index];
+    storyMotion = { elapsed: 0, update: createMotion(root) };
+    storyMotion.update(state.reducedMotion ? 10000 : 0);
+  }
   if (state.index === 3) {
     schedule(() => animateNumber("forecast-demand", DEMO_DATA.forecastDemandGrowth, { decimals: 1, prefix: "+" }), 2150);
     schedule(() => animateNumber("forecast-pd", DEMO_DATA.pd, { decimals: 1 }), 2400);
@@ -315,8 +569,8 @@ function updateTranscript() {
   const stress = DEMO_DATA.stress[state.stress];
   const content = [
     ["같은 재원, 서로 다른 목표", [`지역 지원 확대와 건전성 관리를 함께 고려합니다.`, `가용 재보증 ${formatter.format(DEMO_DATA.availableGuarantee)} → ${formatter.format(DEMO_DATA.constrainedGuarantee)}억원 (가상 예시)`]],
-    ["지역의 변화에서 위험 신호를 발견", [`가상 뉴스: ${DEMO_DATA.news.region} 주요 제조사업장 ${DEMO_DATA.news.months}개월 생산중단`, "전북의 제조업과 운송·음식·숙박업에 영향이 퍼집니다."]],
-    ["뉴스를 구조화된 Risk Event로 변환", [`${DEMO_DATA.news.region} · ${DEMO_DATA.news.event} · ${DEMO_DATA.news.months}개월`, "직접 영향: 제조업 / 2차 영향: 운송·음식·숙박", `추출 신뢰도 ${DEMO_DATA.news.confidence}% (가상 예시)`]],
+    ["지역의 변화에서 위험 신호를 발견", ["서울 → 경기 → 전북 → 충남 → 부산의 지역 신호를 순차 탐색합니다.", `가상 뉴스: ${DEMO_DATA.news.region} 주요 제조사업장 ${DEMO_DATA.news.months}개월 생산중단`, "전북의 제조업과 운송·음식·숙박업에 영향이 퍼집니다. 위치와 탐색 경로는 개념도입니다."]],
+    ["뉴스를 구조화된 Risk Event로 변환", ["기사 속 단어를 읽고, 분리하고, 각각의 위험 변수로 옮깁니다.", `${DEMO_DATA.news.region} · ${DEMO_DATA.news.event} · ${DEMO_DATA.news.months}개월`, "직접 영향: 제조업 / 2차 영향: 운송·음식·숙박", `추출 신뢰도 ${DEMO_DATA.news.confidence}% (가상 예시)`]],
     ["Forecast Engine의 가상 예측", [`3개월 보증수요 +${DEMO_DATA.forecastDemandGrowth}% / 예상 PD ${DEMO_DATA.pd}%`, `예상손실 ${DEMO_DATA.expectedLoss}억원 / 예상 회수율 ${DEMO_DATA.recoveryRate}%`]],
     ["정책 언어를 계산 가능한 조건으로", ["비수도권 지원 ≥ 정책 목표", "예상손실 ≤ 기준안 / 건설업 Exposure ≤ 집중 한도", "중저신용 지원 ≥ 기존 수준 / 총 재보증 ≤ 가용 여력"]],
     ["세 가지 대안을 담당자가 선택", [`${formatter.format(DEMO_DATA.scenarios)}개 가상 시나리오 · ${formatter.format(DEMO_DATA.availableGuarantee)}억원 여력`, "안정형: 손실·지원 ↓ / 균형형: 손실·지원 ↔", `지원확대형: 지원·위험 ↑ / 현재 선택: ${PORTFOLIOS[state.portfolio].name}`]],
@@ -445,6 +699,10 @@ motionQuery.addEventListener("change", event => {
 function tick(now) {
   const delta = Math.max(0, now - state.lastTick);
   state.lastTick = now;
+  if (storyMotion && !document.hidden && !state.reducedMotion) {
+    storyMotion.elapsed = Math.min(storyMotion.elapsed + delta, 10000);
+    storyMotion.update(storyMotion.elapsed);
+  }
   if (state.autoplay && !document.hidden) {
     state.elapsed += delta;
     if (state.elapsed >= SCENES[state.index].duration) {
